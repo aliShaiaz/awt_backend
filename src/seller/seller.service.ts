@@ -137,6 +137,7 @@ export class SellerService {
         category -> id , name 
       */
 
+  /*      
   private Order: Order[] = [
     {
       orderId : 1,
@@ -160,6 +161,7 @@ export class SellerService {
       orderType : 'General' // ENUM theke ashbe 🔰 ENUM create korte hobe 
     },
   ];
+  */
 
   private notifications: Notification[] = [
     {
@@ -308,20 +310,24 @@ export class SellerService {
 
   // 11 done partially
   getOrderStatusPending(){
+    /*
     const orderStatusPending = this.Order.filter(preOrder => preOrder.orderStatus === OrderStatusEnum.OrderPending);
     if(orderStatusPending.length > 0){
       return orderStatusPending;
     }
+    */
     return `No Order Status Pending Found`;
   }
 
   //12 done partially
   getPaymentCompleteStatusOfPreOrder(){
+    /*
     const paymentComplete = this.Order.filter(preOrder => preOrder.orderStatus === PaymentStatusEnum.PaymentComplete);
     if(paymentComplete.length > 0){
       // 🔰 jader payment complete tader details chole ashbe .. 
-      return paymentComplete;
+      return paymentComplete; 
     }
+    */
     return `No Payment Complete Status Found`;
   }
 

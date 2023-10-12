@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Specification } from "./product/specificaiton.entity";
 
 @Entity()
 export class Order{
@@ -14,12 +15,11 @@ export class Order{
   sellerId : number;
   @Column()
   sellerName : string; // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
-  @Column()
-  specification :
-    {
-    title: string;
-    description : string;
-    }[];
+  
+
+  @OneToMany(()=> Specification, (specification) => specification.order)
+  specification : Specification[];
+    
   @Column()
   price : number;
   @Column()
