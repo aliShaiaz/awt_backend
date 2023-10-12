@@ -38,13 +38,14 @@ export class SellerService {
     },
   ];
 
-  // 1 done // 1 again done 
+  // 1 done // 🟢🟢
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
     let newSeller;
     if(createSellerDto.id){
       newSeller = {...createSellerDto}
     }else{
-      newSeller = {id: Date.now(), ...createSellerDto}
+      //newSeller = {id: Date.now(), ...createSellerDto}
+      newSeller = {...createSellerDto}
     }
     this.sellersRepository.create(newSeller);
     await this.sellersRepository.save(newSeller);
@@ -67,8 +68,9 @@ export class SellerService {
   
 
   // 2 done 
-  findAll() {
-    return [];
+  async findAll() : Promise<Seller[]> {
+    //return [];
+    return await this.sellersRepository.find();
     //return this.sellers;
   }
 

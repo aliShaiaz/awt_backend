@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MessageService } from './message.service.nonRelational';
+import { MessageService } from './mess.age.s.ervice.nonRelational';
 import { MessageController } from './message.controller';
 import { SellerService } from 'src/seller/seller.service';
 import { Message } from './entities/message.entity';

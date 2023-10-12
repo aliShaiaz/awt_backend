@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { MessageService } from './message.service.nonRelational';
+import { MessageService } from './mess.age.s.ervice.nonRelational';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';

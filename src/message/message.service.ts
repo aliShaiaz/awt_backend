@@ -131,7 +131,10 @@ export class MessageService {
     // eta amader ke shob user return korbe Seller Service theke 
     //⭕
     const sellers = await this.sellerService.findAll();
-    const filteredSellers = sellers.filter(seller => filteredParticipantsEmail2.includes(seller.sellerEmailAddress));
+    // Property 'filter' does not exist on type 'Promise<Seller[]>
+    
+
+    const filteredSellers = await sellers.filter(seller => filteredParticipantsEmail2.includes(seller.sellerEmailAddress));
     
     
 

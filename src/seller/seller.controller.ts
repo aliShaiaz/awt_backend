@@ -43,8 +43,8 @@ export class SellerController {
     return this.sellerService.getPaymentCompleteStatusOfPreOrder();
   }
 
-  ////////////// ✅✅✅✅✅✅✅✅✅✅✅✅ 1. Using DTO 
-  //1 🔰create new seller 🟢done
+  
+  //1 🔰create new seller 🟢🟢
 
   //@UsePipes(new ValidationPipe())// Apply the validation
   @Post()// 📃7
@@ -62,7 +62,7 @@ export class SellerController {
 
   //2 🔰get all seller 🟢 done again
   @Get()// 📃6
-  findAll() {
+  async findAll() : Promise<Seller[]> {
     return this.sellerService.findAll();
   }
 

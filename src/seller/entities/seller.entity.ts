@@ -3,32 +3,34 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 @Entity()
 export class Seller {
   @PrimaryGeneratedColumn()
+  // 🤔 now if i want to give a custom id .. then how can i do that ?
+  // @PrimaryGeneratedColumn('uuid') // what is this ? 
   id : number;
   @Column()
   sellerName : string;
-  @Column()
+  @Column({ nullable: true })
   sellerEmailAddress : string;
-  @Column()
+  @Column({ nullable: true })
   sellerPassword:string;
-  @Column()
+  @Column({ nullable: true })
   sellerPhoneNumber:number; // i think eita string hobe .. 
-  @Column()
+  @Column({ nullable: true })
   sellerDescription?:string;
-  @Column()
+  @Column({ nullable: true })
   sellerImage ?: string;
-  @Column()
+  @Column({ nullable: true })
   shopName : string;
-  @Column()
+  @Column({ nullable: true })
   shopDescription ?: string;
-  @Column()
+  @Column({ nullable: true })
   shopLogo ?: string; 
-  @Column()
+  @Column({ nullable: true })
   status ?: string; //🔰 etar value ENUM theke ashbe .. 
-  @Column()
+  @Column({ nullable: true })
   rating ?: number;
-  @Column()
+  @Column({ nullable: true })
   offlineShopAddress ?: string;
-  @Column()
+  @Column({ nullable: true })
   googleMapLocation ?: string;
   //@Column('bytea', { nullable: true }) // Using 'bytea' type for image data
   //string; // Assuming you store image URLs here
