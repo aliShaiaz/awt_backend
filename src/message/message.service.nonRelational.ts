@@ -23,7 +23,60 @@ export class MessageService {
     @InjectRepository(Conversation) private conversationsRepository: Repository<Conversation>,
     ){}
 
-   
+    private readonly messages:Message[] = [
+      {
+        messageId : 1,
+        senderEmail : 'a@gmail.com',
+        receiverEmail : 'b@gmail.com',
+        conversationId : 1,
+        message : 'sender : a ........ receiver b'
+      },{
+        messageId : 2,
+        senderEmail : 'b@gmail.com',
+        receiverEmail : 'a@gmail.com',
+        conversationId : 1,
+        message : 'sender : b ........ receiver a' // 1 count 
+      },
+      {
+        messageId : 3,
+        senderEmail : 'a@gmail.com',
+        receiverEmail : 'c@gmail.com',
+        conversationId : 2,
+        message : 'sender : a ........ receiver c' // 2 count
+      },{
+        messageId : 4,
+        senderEmail : 'c@gmail.com',
+        receiverEmail : 'a@gmail.com',
+        conversationId : 2,
+        message : 'sender : c ........ receiver a'
+      },
+      {
+        messageId : 5,
+        senderEmail : 'a@gmail.com',
+        receiverEmail : 'd@gmail.com',
+        conversationId : 3,
+        message : 'sender : a ........ receiver d'
+      }
+    ];
+  
+    private readonly conversations:Conversation[] = [
+      {
+        conversationId : 1,
+        participantsEmail : 'a@gmail.com-b@gmail.com'
+        
+      },
+      {
+        conversationId : 2,
+        participantsEmail : 'a@gmail.com-c@gmail.com'
+        
+      },
+      {
+        conversationId : 3,
+        participantsEmail : 'd@gmail.com-a@gmail.com'
+        
+      }
+    ];
+
 
 
   // I think done 🟢

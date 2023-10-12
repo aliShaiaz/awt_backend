@@ -1,4 +1,4 @@
-import { Body, Injectable, Post } from '@nestjs/common';
+import { Body, Injectable, NotFoundException, Post } from '@nestjs/common';
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
 import { Seller } from './entities/seller.entity';
@@ -7,162 +7,30 @@ import { ReviewCategoryEnum } from './model/review.model';
 import { Order } from './entities/order.entity';
 import { OrderStatusEnum, PaymentStatusEnum } from './model/preOrder.model';
 import { Notification } from './entities/notification.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class SellerService {
 
+  constructor(
+    @InjectRepository(Seller) private sellersRepository: Repository<Seller>,
+    @InjectRepository(Order) private ordersRepository: Repository<Order>,
+    @InjectRepository(Product) private productsRepository: Repository<Product>
   
-  private sellers: Seller[] = [
-    {
-      id : 1,
-      sellerName : 'b',
-      sellerEmailAddress : 'b@gmail.com',
-      sellerPassword:'sellerPassword1',
-      sellerPhoneNumber: 234, // i think eita string hobe .. 
-      sellerDescription:'sellerDescription1',
-      // seller email should be here .. 
-      //sellerImage ?: Buffer;
-      shopName : 'shopName1',
-      shopDescription : 'shopDescription1',
-      //shopLogo ?: Buffer; 
-      status : 'status1', //🔰 etar value ENUM theke ashbe .. 
-      rating : 2,
-      offlineShopAddress : 'offlineShopAddress1',
-      googleMapLocation : 'googleMapLocation1',
-    },
-    {
-      id : 2,
-      sellerName : 'd',
-      sellerEmailAddress : 'd@gmail.com',
-      sellerPassword:'sellerPassword1',
-      sellerPhoneNumber: 234, // i think eita string hobe .. 
-      sellerDescription:'sellerDescription1',
-      // seller email should be here .. 
-      //sellerImage ?: Buffer;
-      shopName : 'shopName1',
-      shopDescription : 'shopDescription1',
-      //shopLogo ?: Buffer; 
-      status : 'status1', //🔰 etar value ENUM theke ashbe .. 
-      rating : 2,
-      offlineShopAddress : 'offlineShopAddress1',
-      googleMapLocation : 'googleMapLocation1',
-    },
-    {
-      id : 3,
-      sellerName : 'c',
-      sellerEmailAddress : 'c@gmail.com',
-      sellerPassword:'sellerPassword1',
-      sellerPhoneNumber: 234, // i think eita string hobe .. 
-      sellerDescription:'sellerDescription1',
-      // seller email should be here .. 
-      //sellerImage ?: Buffer;
-      shopName : 'shopName1',
-      shopDescription : 'shopDescription1',
-      //shopLogo ?: Buffer; 
-      status : 'status1', //🔰 etar value ENUM theke ashbe .. 
-      rating : 2,
-      offlineShopAddress : 'offlineShopAddress1',
-      googleMapLocation : 'googleMapLocation1',
-    },
-    {
-      id : 4,
-      sellerName : 'e',
-      sellerEmailAddress : 'e@gmail.com',
-      sellerPassword:'sellerPassword1',
-      sellerPhoneNumber: 234, // i think eita string hobe .. 
-      sellerDescription:'sellerDescription1',
-      // seller email should be here .. 
-      //sellerImage ?: Buffer;
-      shopName : 'shopName1',
-      shopDescription : 'shopDescription1',
-      //shopLogo ?: Buffer; 
-      status : 'status1', //🔰 etar value ENUM theke ashbe .. 
-      rating : 2,
-      offlineShopAddress : 'offlineShopAddress1',
-      googleMapLocation : 'googleMapLocation1',
-    },
-  ];
+  ){}
 
-  /*
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Vivo Y9',
-      details : 'details1',
-      productImage: 'test image string', // this should be an array 
-      rating: 2,
-      price : 23, 
-      availableQuantity : 33, 
-      lowestValueToStock : 3, // 🔰 available quantity , lowestValueToStock er shoman hoile seller er kas e notification jabe .. 
-      //availableQuality : ['Local', 'Japanise'], // this should be an array 
-      
-      availableQuality : [{
-        id:1,
-        quality:'Local',
-        
-      }],
-      
-      
-      specification : [
-        {
-        title: 'Operating System',
-        description : 'Android 10',
-        },
-        {
-          title: 'Display',
-          description : 'Amoled',
-        },
-        
-      ],
-      review : [
-        {
-          reviewCategory : ReviewCategoryEnum.PositiveReview, //🔰 etar value ENUM theke ashbe ..
-          reviewId : 1,
-          reviewDetails : "Product is good",
-        },
-        {
-          reviewCategory : ReviewCategoryEnum.NegetiveReview, //🔰 etar value ENUM theke ashbe ..
-          reviewId : 2,
-          reviewDetails : "Product is bad",
-        },
-        
-      ],
-    },
-    
-  ];
-  */
+  
+  
+
+  
 
   /*
       //🟢 category should be another table / entity .. product and category should have .... relationship 
         category -> id , name 
       */
 
-  /*      
-  private Order: Order[] = [
-    {
-      orderId : 1,
-      productId : 1,
-      productName :'Vivo Y9', // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
-      productQuantity : 1,
-      sellerId : 1,
-      sellerName : 'sellerName1', // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
-      specification : [
-        {
-        title: 'Operating System',
-        description : 'Android 10',
-        },
-        //🔴 cant assign multiple object 
-      ],
-      price : 23,
-      advancePaidMoney : 10,
-      dueAmount : 13,
-      //estimatedDeliveryDate :,
-      orderStatus: OrderStatusEnum.OrderPending, //🔰 etar value ENUM theke ashbe .. 
-      orderType : 'General' // ENUM theke ashbe 🔰 ENUM create korte hobe 
-    },
-  ];
-  */
-
+  
   private notifications: Notification[] = [
     {
       notificationId : 1,
@@ -170,15 +38,16 @@ export class SellerService {
     },
   ];
 
-  // 1 done 
-  create(createSellerDto: CreateSellerDto) : Seller {
+  // 1 done // 1 again done 
+  async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
     let newSeller;
     if(createSellerDto.id){
       newSeller = {...createSellerDto}
     }else{
       newSeller = {id: Date.now(), ...createSellerDto}
     }
-    this.sellers.push(newSeller)
+    this.sellersRepository.create(newSeller);
+    await this.sellersRepository.save(newSeller);
     return newSeller;
   }
 
@@ -191,7 +60,7 @@ export class SellerService {
     }else{
       newSeller = {id: Date.now(), ...createSellerDto, sellerImage: file}
     }
-    this.sellers.push(newSeller)
+    //🛡️🛡️🛡️this.sellers.push(newSeller)
     return newSeller;
   }
 
@@ -199,18 +68,28 @@ export class SellerService {
 
   // 2 done 
   findAll() {
-    return this.sellers;
+    return [];
+    //return this.sellers;
   }
 
-  // 3 done 
-  findOne(id: number) {
-    return this.sellers.find(seller => seller.id == id);
-    
+  // 3 done // 3  again done 
+  async findOne(id: number) : Promise<Seller> {
+    if(id != null && id != undefined){
+      return await this.sellersRepository.findOne({
+        where: {id} // 🤔😥 // it means {id : id}
+      });
+    }
+    //return this.sellers.find(seller => seller.id == id);
   }
 
   // 4 done 
-  update(id: number, updateSellerDto: UpdateSellerDto) : (object | string) {
-    let seller = this.sellers.find(seller => seller.id === id);
+  async update(id: number, updateSellerDto: UpdateSellerDto) : Promise<Seller | string>  {
+    // let seller = this.sellers.find(seller => seller.id === id);
+    // seller = {...seller, ...updateSellerDto}; // ⭕ Industry te bad practice 
+    const seller = await this.findOne(id);
+    if(seller == undefined){
+      throw new NotFoundException();
+    }
     if (seller){
 
       // better hoito ekta object banaye .. sheta return kora .. 
@@ -231,33 +110,44 @@ export class SellerService {
       if(updateSellerDto.status){
         seller.status = updateSellerDto.status;
       }
-      return seller;
+      //return seller;
+      await this.sellersRepository.update(id, seller);
+      return this.findOne(id); // 😥
     }
     
     return `Cant find that User`;
   }
 
   // 5 done 
-  remove(id: number) {
+  async remove(id: number) : Promise<DeleteResult> {
 
     // this method is used for delete array element
-    const newArray =  this.sellers.filter(seller => seller.id !== id); // this actually returns new array 
-    this.sellers = newArray;
-    return this.sellers;
+    // const newArray =  this.sellers.filter(seller => seller.id !== id); // this actually returns new array 
+    //this.sellers = newArray;
+    
+    const sellerToDeleted = await this.findOne(id); // string or number ? 😥
+
+    if(sellerToDeleted == undefined){
+      throw new NotFoundException();
+    }
+    return this.sellersRepository.delete(id); // remove method use korte hobe 
+    
+    
+    //return this.sellers;
     
   }
 
   // 6 done fully
-  sellerLogin(loginSellerDto){
+  sellerLogin(loginSellerDto){ 
     
-    const seller = this.sellers.find(seller => seller.sellerEmailAddress == loginSellerDto.sellerEmailAddress && seller.sellerPassword == loginSellerDto.sellerPassword);
+    // const seller = this.sellers.find(seller => seller.sellerEmailAddress == loginSellerDto.sellerEmailAddress && seller.sellerPassword == loginSellerDto.sellerPassword);
    
-    if(seller){
-      const {id} = seller; // id destructure korlam 
+    // if(seller){
+    //   const {id} = seller; // id destructure korlam 
 
-      // id destructure kore id return korte pari .. 
-      return id;
-    }
+    //   // id destructure kore id return korte pari .. 
+    //   return 2;
+    // }
     
     return `Cant find that User`;
   }

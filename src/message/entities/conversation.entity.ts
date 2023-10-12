@@ -9,6 +9,7 @@ export class Conversation{
   @Column()
   timeStamps ?: Date;
 }
+/////////// One Conversation can have multiple messages
 
 /**
   

@@ -69,7 +69,7 @@ export class SellerController {
   ////////////// ✅✅✅✅✅✅✅✅✅✅✅✅ 2. Transformation
   //3 🔰 get one seller by id 🟢 done
   @Get(':id')// 📃5
-  findOne(@Param('id', ParseIntPipe) id: number): Seller {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Seller> {
     return this.sellerService.findOne(id);
   }
 

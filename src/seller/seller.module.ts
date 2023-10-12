@@ -8,10 +8,11 @@ import { Order } from './entities/order.entity';
 import { AvailableQuality } from './entities/product/availableQuality.entity';
 import { Specification } from './entities/product/specificaiton.entity';
 import { Review } from './entities/product/review.entity';
+import { Repository } from 'typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review])],
   controllers: [SellerController],
-  providers: [SellerService],
+  providers: [SellerService, Repository],
 })
 export class SellerModule {}

@@ -15,6 +15,9 @@ export class Message{
   @Column()
   timeStamps ?: Date; // 🔴 data type niye issue thakte pare 
 }
+////////// Multiple Message can be in one Conversation
+
+
 /**
  * message seen unseen logic niye chinta korte hobe 
  * 
