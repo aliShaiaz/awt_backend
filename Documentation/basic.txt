@@ -20,6 +20,7 @@ then : git checkout -b "name of User Name "
   like for my case "git checkout -b Seller";
 then : create a database in pg admin 
      : name must be "awt_backend"
+     : and please give proper password 
 
 🔃 - install
 😢 - error // cant understand
