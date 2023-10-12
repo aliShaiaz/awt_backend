@@ -1,0 +1,11 @@
+1. npm i --save @nestjs/passport passport passport-local
+/**
+  user name and password .. then login 
+*/
+2. npm i --save-dev @types/passport-local // strategy 
+3. nest g resource user // for generating user
+3. nest g module auth  // for auth staff
+4. nest g service auth // for auth staff 
+
+5. npm i express-session 
+6. npm i --save @nestjs/jwt passport-jwt
