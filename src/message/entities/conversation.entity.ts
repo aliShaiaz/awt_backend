@@ -1,6 +1,12 @@
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+
+@Entity()
 export class Conversation{
+  @PrimaryGeneratedColumn()
   conversationId : number;
+  @Column()
   participantsEmail : string;
+  @Column()
   timeStamps ?: Date;
 }
 

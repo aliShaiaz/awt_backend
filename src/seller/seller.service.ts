@@ -2,9 +2,9 @@ import { Body, Injectable, Post } from '@nestjs/common';
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
 import { Seller } from './entities/seller.entity';
-import { Product } from './entities/product.entity';
+import { Product } from './entities/product/product.entity';
 import { ReviewCategoryEnum } from './model/review.model';
-import { preOrder } from './entities/preOrder.entity';
+import { Order } from './entities/order.entity';
 import { OrderStatusEnum, PaymentStatusEnum } from './model/preOrder.model';
 import { Notification } from './entities/notification.entity';
 
@@ -83,21 +83,26 @@ export class SellerService {
     },
   ];
 
+  /*
   private products: Product[] = [
     {
       id: 1,
       name: 'Vivo Y9',
       details : 'details1',
-      //productImage: Buffer; // string // this should be an array 
+      productImage: 'test image string', // this should be an array 
       rating: 2,
-      price : 23, // may be price can be an array 
-      availableQuantity : 33, /// stockStatus nam e ki arekta field rakhar dorkar ase ?
+      price : 23, 
+      availableQuantity : 33, 
       lowestValueToStock : 3, // 🔰 available quantity , lowestValueToStock er shoman hoile seller er kas e notification jabe .. 
-      availableQuality : ['Local', 'Japanise'], // this should be an array 
-      /*
-      //🟢 category should be another table / entity .. product and category should have .... relationship 
-        category -> id , name 
-      */
+      //availableQuality : ['Local', 'Japanise'], // this should be an array 
+      
+      availableQuality : [{
+        id:1,
+        quality:'Local',
+        
+      }],
+      
+      
       specification : [
         {
         title: 'Operating System',
@@ -123,50 +128,18 @@ export class SellerService {
         
       ],
     },
-    {
-      id: 2,
-      name: 'Vivo Y10',
-      details : 'details1',
-      //productImage: Buffer; // string // this should be an array 
-      rating: 2,
-      price : 23, // may be price can be an array 
-      availableQuantity : 3, /// stockStatus nam e ki arekta field rakhar dorkar ase ?
-      lowestValueToStock : 3, // 🔰 available quantity , lowestValueToStock er shoman hoile seller er kas e notification jabe .. 
-      availableQuality : ['Local', 'Japanise'], // this should be an array 
-      /*
+    
+  ];
+  */
+
+  /*
       //🟢 category should be another table / entity .. product and category should have .... relationship 
         category -> id , name 
       */
-      specification : [
-        {
-        title: 'Operating System',
-        description : 'Android QQ',
-        },
-        {
-          title: 'Display',
-          description : 'IPS LCD',
-        },
-        
-      ],
-      review : [
-        {
-          reviewCategory : ReviewCategoryEnum.NegetiveReview, //🔰 etar value ENUM theke ashbe ..
-          reviewId : 2,
-          reviewDetails : "Product is Bad",
-        },
-        {
-          reviewCategory : ReviewCategoryEnum.AfterSalesExperience, //🔰 etar value ENUM theke ashbe ..
-          reviewId : 2,
-          reviewDetails : "Best Experience",
-        },
-        
-        
-      ],
-    },
-  ];
 
-  private preOrder: preOrder[] = [
+  private Order: Order[] = [
     {
+      orderId : 1,
       productId : 1,
       productName :'Vivo Y9', // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
       productQuantity : 1,
@@ -184,7 +157,7 @@ export class SellerService {
       dueAmount : 13,
       //estimatedDeliveryDate :,
       orderStatus: OrderStatusEnum.OrderPending, //🔰 etar value ENUM theke ashbe .. 
-      
+      orderType : 'General' // ENUM theke ashbe 🔰 ENUM create korte hobe 
     },
   ];
 
@@ -295,14 +268,14 @@ export class SellerService {
     }else{
       newProduct = {id: Date.now(), ...createProductDto}
     }
-    this.products.push(newProduct)
+    // 🛡️🛡️🛡️this.products.push(newProduct)
     return newProduct;
   }
 
   // 9 done partially
   checkForStockAndsendStockLessNotification(){
+    /*
     const stockLessProducts = this.products.filter(product => product.availableQuantity <= product.lowestValueToStock);
-    //console.log("---- notification-- 🔰 1" , stockLessProducts)
     if(stockLessProducts.length > 0){
       // create a notification
       const newNotification = {
@@ -315,24 +288,27 @@ export class SellerService {
       
       return newNotification;
     }
+*/
     return `No Stock Less Product Found`;
   }
 
   // 10 done partially 
   getNegetiveReview(){
     // amar product id gula dorkar 
+    /*
     const negetiveReview = this.products.filter(product => product.review[0].reviewCategory === ReviewCategoryEnum.NegetiveReview);
     if(negetiveReview.length > 0){
       // 🔰 jeta korte hobe .. jei product gular negetive review ase .. shei product gular id, name and review gula niye object baniye return korte hobe .. 
       return negetiveReview;
     }
+    */
     return `No Negetive Review Found`;
 
   }
 
   // 11 done partially
   getOrderStatusPending(){
-    const orderStatusPending = this.preOrder.filter(preOrder => preOrder.orderStatus === OrderStatusEnum.OrderPending);
+    const orderStatusPending = this.Order.filter(preOrder => preOrder.orderStatus === OrderStatusEnum.OrderPending);
     if(orderStatusPending.length > 0){
       return orderStatusPending;
     }
@@ -341,7 +317,7 @@ export class SellerService {
 
   //12 done partially
   getPaymentCompleteStatusOfPreOrder(){
-    const paymentComplete = this.preOrder.filter(preOrder => preOrder.orderStatus === PaymentStatusEnum.PaymentComplete);
+    const paymentComplete = this.Order.filter(preOrder => preOrder.orderStatus === PaymentStatusEnum.PaymentComplete);
     if(paymentComplete.length > 0){
       // 🔰 jader payment complete tader details chole ashbe .. 
       return paymentComplete;

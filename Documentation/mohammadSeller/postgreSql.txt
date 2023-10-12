@@ -1,0 +1,4 @@
+.
+1. npm i @nestjs/mapped-types
+ npm i -D @types/multer
+ // 🔗 -> means connected 

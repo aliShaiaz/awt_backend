@@ -1,9 +1,18 @@
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+
+@Entity()
 export class Message{
+  @PrimaryGeneratedColumn()
   messageId : number;
+  @Column()
   senderEmail : string;
+  @Column()
   receiverEmail : string;
+  @Column()
   conversationId : number;
+  @Column()
   message : string;
+  @Column()
   timeStamps ?: Date; // 🔴 data type niye issue thakte pare 
 }
 /**
