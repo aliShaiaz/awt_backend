@@ -3,6 +3,7 @@ import { MessageService } from './message.service.nonRelational';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
+import { Message } from './entities/message.entity';
 
 @Controller('seller/message') //🔰  but we want this like seller/message .. 
 // how can we do that 
@@ -16,15 +17,15 @@ export class MessageController {
 
 
   // I think done 🟢 ✔️ initial Test Done
-  @Post('createNewMessage')
-  createNewMessage(
+  @Post(/*'createNewMessage'*/ 'createNewMessageAgain')
+  async createNewMessage(
     @Body() createMessageDto /*: CreateMessageDto*/ ,
     @Query('senderEmail') senderEmail: string, //😢 sender email ki evabe send kora thik hobe ? 
-  ) {
+  ) : Promise<Message> {
     //message 
     //receiverEmail
     //senderEmail
-    return this.messageService.createNewMessage(createMessageDto, senderEmail);
+    return await this.messageService.createNewMessage(createMessageDto, senderEmail);
   }
 
   // I think done 🟢

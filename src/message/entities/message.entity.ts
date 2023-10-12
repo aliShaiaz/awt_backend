@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
+import { Conversation } from "./conversation.entity";
 
 @Entity()
 export class Message{
@@ -14,6 +15,11 @@ export class Message{
   message : string;
   @Column()
   timeStamps ?: Date; // 🔴 data type niye issue thakte pare 
+
+  // 🔗One Conversation can have multiple messages
+  // i mean many message to  One Conversation
+  @ManyToOne(type => Conversation, conversation => conversation.message)
+  conversation ? : Conversation;
 }
 ////////// Multiple Message can be in one Conversation
 

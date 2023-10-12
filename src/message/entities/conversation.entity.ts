@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Message } from "./message.entity";
 
 @Entity()
 export class Conversation{
@@ -8,6 +9,11 @@ export class Conversation{
   participantsEmail : string;
   @Column()
   timeStamps ?: Date;
+
+  // 🔗One Conversation can have multiple messages
+  @OneToMany(type => Message, message => message.conversation)
+  message ? : Message[];
+
 }
 /////////// One Conversation can have multiple messages
 

@@ -25,9 +25,8 @@ export class MessageService {
 
    
 
-
   // I think done 🟢
-  createNewMessage(createMessageDto /*: CreateMessageDto*/, senderEmail:string) {
+  async createNewMessage(createMessageDto /*: CreateMessageDto*/, senderEmail:string) : Promise<Message> {
     const {receiverEmail, message} = createMessageDto;
     const newMessage = {
       messageId : Date.now(),
@@ -41,9 +40,18 @@ export class MessageService {
     const participant_email1 =  senderEmail+'-'+receiverEmail;
     const participant_email2 =  receiverEmail+'-'+senderEmail;
 
-    const conversation = this.conversations.find(conversation => conversation.participantsEmail === participant_email1 || conversation.participantsEmail === participant_email2);
+    //const conversation = this.conversationsRepository.find(conversation => conversation.participantsEmail === participant_email1 || conversation.participantsEmail === participant_email2);
+    
+    const conversation : any = await this.conversationsRepository.find({
+      where: [
+        { participantsEmail: participant_email1 }, // 🛡️🛡️🛡️ we need OR logic here .. 
+        { participantsEmail: participant_email2 },
+      ],
+      // select: ["conversationId"]
+    });
+    
     if(conversation){
-      const {conversationId} = conversation;
+      const { conversationId} = conversation;
       // conversation exist 
       // add message in message table 
       const newMessageWithConversationId = {
@@ -51,7 +59,9 @@ export class MessageService {
         conversationId : conversationId
       }
       
-      this.messages.push(newMessageWithConversationId);
+      //this.messages.push(newMessageWithConversationId);
+      await this.messagesRepository.create(newMessageWithConversationId);
+
       return newMessageWithConversationId;
     }else{
       // conversation does not exist 
@@ -62,46 +72,45 @@ export class MessageService {
         participantsEmail : participant_email1,
         timeStamps : Date.now()
       }
-      this.createNewConversation(newConversation);
+      const newCreatedConversation =  await this.createNewConversation(newConversation);
+      const newlyCreatedConversationId = newCreatedConversation.conversationId;
 
       // jei conversatioin ta create korlam .. shetar id amar jana lagbe 
-
-      const conversation = this.conversations.find(conversation => conversation.participantsEmail === participant_email1 || conversation.participantsEmail === participant_email2);
-
-      const {conversationId} = conversation;
 
       // new message with conversation id
       const newMessageWithConversationId = {
         ...newMessage,
-        conversationId : conversationId
+        conversationId : newlyCreatedConversationId
       }
 
       // its time to save this in message table 
-      this.messages.push(newMessageWithConversationId);
+      this.messagesRepository.create(newMessageWithConversationId);
       return newMessageWithConversationId;
     }
     //😢 ekhane ki kichu return korar dorkar ase ? 
   }
 
   // I think done 🟢
-  createNewConversation(createConversationDto/*: CreateConversationDto */) {
+  async createNewConversation(createConversationDto/*: CreateConversationDto */) : Promise<Conversation> {
     const {participantsEmail, timeStamps} = createConversationDto;
     const newConversation = {
       conversationId : Date.now(),
       participantsEmail : participantsEmail,
       timeStamps : timeStamps
     }
-    this.conversations.push(newConversation);
-    return 'This action adds a new message';
+    this.conversationsRepository.create(newConversation);
+    return newConversation;
+    //return 'This action adds a new message';
   }
   
-  showAllConversationToCurrentLoggedInUser(currentLoggedInUserEmail : string) {
-    // Logged in user er email Conversation table er ParticipantEmail er moddhe thaklei Thaklei shekhan theke
-    // conversation gula show korbo 
+  async showAllConversationToCurrentLoggedInUser(currentLoggedInUserEmail : string) :Promise<Conversation[]> {   
+    // current logged in user jodi participant email er moddhe thake .. taile shei conversation show korbo
+    const conversations = await this.conversationsRepository.find({
+      where: [
+        { participantsEmail: currentLoggedInUserEmail }, // 🛡️🛡️🛡️ not sure .. 
+      ]
+    });
 
-    const conversations = this.conversations
-    .filter(conversation => conversation.participantsEmail.includes(currentLoggedInUserEmail));
-    
 
     const participantsEmail = conversations.map(conversation => conversation.participantsEmail);
 
@@ -121,7 +130,7 @@ export class MessageService {
     //const {}
     // eta amader ke shob user return korbe Seller Service theke 
     //⭕
-    const sellers = this.sellerService.findAll();
+    const sellers = await this.sellerService.findAll();
     const filteredSellers = sellers.filter(seller => filteredParticipantsEmail2.includes(seller.sellerEmailAddress));
     
     
@@ -129,17 +138,27 @@ export class MessageService {
 
     // conversation id er maddhome message table er last message ta selected property te add korbo 
 
-    const conversationsId = conversations.map(conversation => conversation.conversationId);
+    const conversationsId :any = conversations.map(conversation => conversation.conversationId);
 
-    const messages = this.messages.filter(message => conversationsId.includes(message.conversationId));
+    //⭕const messages = this.messages.filter(message => conversationsId.includes(message.conversationId));
 
+    //⭕ const messages = await this.messagesRepository.find({
+    //   where: [
+    //     { conversationId: conversationsId }, // 🛡️🛡️🛡️ not sure .. 
+    //   ]
+    // });
 
-    const  selectedProperties =  filteredSellers.map(seller => {
-
-
+    const  selectedProperties : any =  filteredSellers.map(seller => {
 
       // ei seller er jonno message gula filter korte hobe
-      const filteredMessages = messages.filter(message => message.senderEmail === seller.sellerEmailAddress || message.receiverEmail === seller.sellerEmailAddress);
+      
+      const filteredMessages : any = this.messagesRepository.find({
+        where: [
+          { senderEmail: seller.sellerEmailAddress }, // Or Logic
+          { receiverEmail: seller.sellerEmailAddress }, // 
+        ]
+      });
+
 
       // time stamp er maddhome last message ta ber korte hobe 🔰
       const lastMessage = filteredMessages[filteredMessages.length - 1].message; //🤔😢 bujhi nai
@@ -160,11 +179,20 @@ export class MessageService {
     
   }
 
-  showAllMessageOfAConversation(conversationId){
+  async showAllMessageOfAConversation(conversationId){
     // ei conversation id against e message table e joto message ase .. sob gula show korbo
     // decending order e .. 🔰 timestamp er maddhome 
     
-    const AllMessage = this.messages.filter(message => message.conversationId == conversationId);
+    //const AllMessage = this.messages.filter(message => message.conversationId == conversationId);
+    
+    
+
+    const AllMessage = await this.messagesRepository.find({
+      where: [
+        { conversationId: conversationId }, // 🛡️🛡️🛡️ not sure .. 
+      ]
+    });
+
     return AllMessage;
   }
 
