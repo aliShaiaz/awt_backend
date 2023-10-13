@@ -7,6 +7,7 @@ import { Seller } from './entities/seller.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from "multer";
 import { SellerService } from './seller.service';
+import { Product } from './entities/product/product.entity';
 
 
 
@@ -44,11 +45,12 @@ export class SellerController {
   }
 
   
-  //1 🔰create new seller 🟢🟢
+  //1 🔰create new seller 🟢🔴
 
   //@UsePipes(new ValidationPipe())// Apply the validation
   @Post()// 📃7
   create(@Body() createSellerDto: CreateSellerDto, ) {
+    console.log("WE ARE IN CONTROLLER ----------")
     return this.sellerService.create(createSellerDto);
   }
 
@@ -60,33 +62,33 @@ export class SellerController {
     return this.sellerService.createWithImage(createSellerDto, file);
   }
 
-  //2 🔰get all seller 🟢 done again
+  //2 🔰get all seller 🟢🟢
   @Get()// 📃6
   async findAll() : Promise<Seller[]> {
     return this.sellerService.findAll();
   }
 
-  ////////////// ✅✅✅✅✅✅✅✅✅✅✅✅ 2. Transformation
-  //3 🔰 get one seller by id 🟢 done
+  
+  //3 🔰 get one seller by id 🟢🟢
   @Get(':id')// 📃5
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Seller> {
     return this.sellerService.findOne(id);
   }
 
-  //4 🔰 update a sellers information 🟢 done
+  //4 🔰 update a sellers information 🟢🟢🔴 kichu logic add korte hobe 
   @Patch(':id')// 📃4
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSellerDto: UpdateSellerDto) {
     return this.sellerService.update(id, updateSellerDto);
   }
 
-  //5 delete a seller  🟢 done
+  //5 delete a seller  🟢🟢 done
   @Delete(':id') // 📃3
   remove(@Param('id', ParseIntPipe) id: number) {
     // 🔰 logged in user tar account delete korte parbe 
     return this.sellerService.remove(id);
   }
 
-  // 6 🔰 seller login 🟢 done partially
+  // 6 🔰 seller login 🔴
   @Post('sellerLogin')// 📃2
   sellerLogin(@Body() loginSellerDto) {
     return this.sellerService.sellerLogin(loginSellerDto);
@@ -96,8 +98,9 @@ export class SellerController {
   // 8 🔰 Create a new Product
    
   @Post('createProduct')// 📃1
-  createNewProduct(@Body() createProductDto) {
-    return this.sellerService.createNewProduct(createProductDto);
+  async createNewProduct(@Body() createProductDto) : Promise<Product> {
+    console.log("------------------- from controller -------------------");
+    return await this.sellerService.createNewProduct(createProductDto);
   }
 
    //////////////////////////////  🔰 seller logout

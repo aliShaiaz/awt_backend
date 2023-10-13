@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { MessageService } from './mess.age.s.ervice.nonRelational';
+//import { MessageService } from './mess.age.s.ervice.nonRelationl';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { Message } from './entities/message.entity';
+import { MessageService } from './message.service';
 
 @Controller('seller/message') //🔰  but we want this like seller/message .. 
 // how can we do that 

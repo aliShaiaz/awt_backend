@@ -10,6 +10,7 @@ import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
+// Status📃(total: problem : )
 @Injectable()
 export class SellerService {
 
@@ -19,11 +20,6 @@ export class SellerService {
     @InjectRepository(Product) private productsRepository: Repository<Product>
   
   ){}
-
-  
-  
-
-  
 
   /*
       //🟢 category should be another table / entity .. product and category should have .... relationship 
@@ -38,14 +34,17 @@ export class SellerService {
     },
   ];
 
-  // 1 done // 🟢🟢
+  // 1 done // 🟢🔴
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
+    console.log("WE ARE IN SERVICE ----------", createSellerDto)
     let newSeller;
     if(createSellerDto.id){
+      console.log("WE ARE IN IF ----------")
       newSeller = {...createSellerDto}
     }else{
-      //newSeller = {id: Date.now(), ...createSellerDto}
-      newSeller = {...createSellerDto}
+      console.log("WE ARE IN ELSE ----------")
+      newSeller = {id: Date.now(), ...createSellerDto}
+      //newSeller = {...createSellerDto}
     }
     this.sellersRepository.create(newSeller);
     await this.sellersRepository.save(newSeller);
@@ -67,28 +66,30 @@ export class SellerService {
 
   
 
-  // 2 done 
+  // 2 🟢🟢
   async findAll() : Promise<Seller[]> {
     //return [];
     return await this.sellersRepository.find();
     //return this.sellers;
   }
 
-  // 3 done // 3  again done 
+  // 3 done //  🟢🟢
   async findOne(id: number) : Promise<Seller> {
     if(id != null && id != undefined){
-      return await this.sellersRepository.findOne({
+      return await this.sellersRepository.findOne({ //🟢 findOneOrFail use korte hobe ..
         where: {id} // 🤔😥 // it means {id : id}
       });
     }
     //return this.sellers.find(seller => seller.id == id);
   }
 
-  // 4 done 
+  // 4 done 🟢🔴 // kichu field er logic add korte hobe .. kono error nai 
   async update(id: number, updateSellerDto: UpdateSellerDto) : Promise<Seller | string>  {
     // let seller = this.sellers.find(seller => seller.id === id);
     // seller = {...seller, ...updateSellerDto}; // ⭕ Industry te bad practice 
-    const seller = await this.findOne(id);
+    const seller = await this.findOne(id); //🟢 findOneOrFail use korte hobe ..
+    console.log("///////////////////////////////////",seller)
+    console.log("///////////////////////////////////",id,updateSellerDto)
     if(seller == undefined){
       throw new NotFoundException();
     }
@@ -98,10 +99,11 @@ export class SellerService {
       
 
       if(updateSellerDto.id){
-        seller.id = updateSellerDto.id;
+        seller.id = seller.id; // eta update kora jabe na .. 
+        // html input form er type rakhte hobe hidden 
       }
-      if(updateSellerDto.name){
-        seller.sellerName = updateSellerDto.name;
+      if(updateSellerDto.sellerName){
+        seller.sellerName = updateSellerDto.sellerName;
       }
       if(updateSellerDto.description){
         seller.sellerDescription = updateSellerDto.description;
@@ -114,14 +116,15 @@ export class SellerService {
       }
       //return seller;
       await this.sellersRepository.update(id, seller);
+      await this.sellersRepository.save(seller);
       return this.findOne(id); // 😥
     }
     
     return `Cant find that User`;
   }
 
-  // 5 done 
-  async remove(id: number) : Promise<DeleteResult> {
+  // 5 done 🟢🟢
+  async remove(id: number) : Promise<Seller> { // DeleteResult rakha jabe na 
 
     // this method is used for delete array element
     // const newArray =  this.sellers.filter(seller => seller.id !== id); // this actually returns new array 
@@ -132,14 +135,14 @@ export class SellerService {
     if(sellerToDeleted == undefined){
       throw new NotFoundException();
     }
-    return this.sellersRepository.delete(id); // remove method use korte hobe 
+    return this.sellersRepository.remove(sellerToDeleted); // delete method use kora jabe na 
     
     
     //return this.sellers;
     
   }
 
-  // 6 done fully
+  // 6 done fully🔴
   sellerLogin(loginSellerDto){ 
     
     // const seller = this.sellers.find(seller => seller.sellerEmailAddress == loginSellerDto.sellerEmailAddress && seller.sellerPassword == loginSellerDto.sellerPassword);
@@ -155,14 +158,24 @@ export class SellerService {
   }
 
   //8 done fully
-  createNewProduct(createProductDto){
+  async createNewProduct(createProductDto) : Promise<Product>{
     let newProduct;
+    console.log("------------------- from service -------------------");
+    
     if(createProductDto.id){
+      console.log("------------------- from IF -------------------");
+    
       newProduct = {...createProductDto}
     }else{
+      console.log("------------------- from Else -------------------");
+    
       newProduct = {id: Date.now(), ...createProductDto}
     }
     // 🛡️🛡️🛡️this.products.push(newProduct)
+    console.log(newProduct);
+    await this.productsRepository.create(newProduct);
+    await this.productsRepository.save(newProduct);
+    
     return newProduct;
   }
 

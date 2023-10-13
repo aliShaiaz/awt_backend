@@ -2,35 +2,36 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
 export class Seller {
-  @PrimaryGeneratedColumn()
+  
   // 🤔 now if i want to give a custom id .. then how can i do that ?
   // @PrimaryGeneratedColumn('uuid') // what is this ? 
+  @PrimaryGeneratedColumn()
   id : number;
-  @Column()
+  @Column('text', {default : ""})
   sellerName : string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   sellerEmailAddress : string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   sellerPassword:string;
-  @Column({ nullable: true })
+  @Column({default : 0})
   sellerPhoneNumber:number; // i think eita string hobe .. 
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   sellerDescription?:string;
-  @Column({ nullable: true })
-  sellerImage ?: string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})// 🔴
+  sellerImage ?: string; 
+  @Column('text', {default : ""})
   shopName : string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   shopDescription ?: string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   shopLogo ?: string; 
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   status ?: string; //🔰 etar value ENUM theke ashbe .. 
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   rating ?: number;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   offlineShopAddress ?: string;
-  @Column({ nullable: true })
+  @Column('text', {default : ""})
   googleMapLocation ?: string;
   //@Column('bytea', { nullable: true }) // Using 'bytea' type for image data
   //string; // Assuming you store image URLs here

@@ -1,0 +1,8 @@
+1. createSeller ->  id is not saving ..
+    if id is not giving then it says 
+    "QueryFailedError: value "1697119559189" is out of range for type integer"
+
+2. createProduct -> 
+    if no value is given .. then 
+    QueryFailedError: value "1697211488871" is out of range for type integer
+    at PostgresQueryRunner.query (D:\Web Dev\NestJs\University\awt_backend\src\driver\postgres\PostgresQueryRunner.ts:299:19)
