@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Generated } from "ty
 import { ReviewCategoryEnum } from "../../model/review.model";
 import { AvailableQuality } from "./availableQuality.entity";
 import { Specification } from "./specificaiton.entity";
-import { Review } from "./review.entity";
+import { Review } from "./review/review.entity";
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn({ type: 'bigint' })
@@ -42,10 +42,10 @@ export class Product {
   
   // One Product Can Have Many Specification 
   // 🔗 One Product can have many Specification 
-  @OneToMany(() => Specification, (specification) => specification.product, {eager: true , cascade: true})
+  @OneToMany(() => Specification, (specification) => specification.productId, {eager: true , cascade: true})
   specifications:  Specification[];
     
-  @OneToMany(() => Review, (review) => review.product, {eager: true, cascade: true})
+  @OneToMany(() => Review, (review) => review.productId, {eager: true, cascade: true, lazy : true})
   reviews : Review[]; //🔗 One Product can have many Review
     
 }

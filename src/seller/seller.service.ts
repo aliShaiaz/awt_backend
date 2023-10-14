@@ -10,6 +10,9 @@ import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { AvailableQuality } from './entities/product/availableQuality.entity';
+import { Specification } from './entities/product/specificaiton.entity';
+import { Review } from './entities/product/review/review.entity';
+import { ReviewReply } from './entities/product/review/reviewReply.entity';
 
 // Status📃(total: problem : )
 @Injectable()
@@ -19,9 +22,10 @@ export class SellerService {
     @InjectRepository(Seller) private sellersRepository: Repository<Seller>,
     @InjectRepository(Order) private ordersRepository: Repository<Order>,
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    @InjectRepository(AvailableQuality) private availableQualitysRepository: Repository<AvailableQuality>
-  
-    
+    @InjectRepository(AvailableQuality) private availableQualitysRepository: Repository<AvailableQuality>,
+    @InjectRepository(Specification) private availableSpecificaitonsRepository: Repository<Specification> ,
+    @InjectRepository(Review) private reviewsRepository: Repository<Review> ,
+    @InjectRepository(ReviewReply) private reviewRepliesRepository: Repository<ReviewReply>  
   ){}
 
   /*
@@ -179,7 +183,7 @@ export class SellerService {
     return newProduct;
   }
 
-  // 13 🔴 product er id add kivabe korbo 🤔😥
+  // 13 🟢🟢
   addAvailableQualityOfAProduct(createAvailableQualityOfAProductDto){
     this.availableQualitysRepository.create(createAvailableQualityOfAProductDto);
     this.availableQualitysRepository.save(createAvailableQualityOfAProductDto);
@@ -190,11 +194,34 @@ export class SellerService {
     return createAvailableQualityOfAProductDto;
   }
 
-  // 14 🟢⭕ may be it works .. lets try again 
+  // 14 🟢🟢
   async getAllProductsDetails(){
     console.log("------------------- from service -------------------")
     return await this.productsRepository.find();
   }
+
+  // 15 🟢🟢
+  async addSpecificationOfAProduct(addSpecificationOfAProductDto){
+     // kono ekta category er product er jonno specification er title gula show korbe 
+  // so, kono ekta category er product er jonno specification title add korte hobe .. 
+
+    this.availableSpecificaitonsRepository.create(addSpecificationOfAProductDto);
+    this.availableSpecificaitonsRepository.save(addSpecificationOfAProductDto);
+    
+    return addSpecificationOfAProductDto;
+  }
+
+
+  // 16 
+
+  async addReviewToAProduct(createReviewDto){
+    const newReview = {...createReviewDto} ;
+    this.reviewsRepository.create(newReview);
+    this.reviewsRepository.save(newReview);
+    return newReview;
+    // return 
+  }
+
 
 
   // 9 done partially

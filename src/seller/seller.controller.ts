@@ -10,6 +10,9 @@ import { SellerService } from './seller.service';
 import { Product } from './entities/product/product.entity';
 import { AvailableQuality } from './entities/product/availableQuality.entity';
 import { CreateAvailableQualityOfAProductDto } from './dto/product/create-available-quality.dto';
+import { Specification } from './entities/product/specificaiton.entity';
+import { Review } from './entities/product/review/review.entity';
+import { CreateReviewDto } from './dto/product/review/create-review.dto';
 
 
 
@@ -46,11 +49,16 @@ export class SellerController {
     return this.sellerService.getPaymentCompleteStatusOfPreOrder();
   }
 
-   //14 🟢⭕ may be it works .. lets try again 
+   //14 🟢🟢
    @Get('getAllProductsDetails')
    async getAllProductsDetails() : Promise<Product[]>{
-     console.log("------------------- from controller -------------------")
-     return await this.sellerService.getAllProductsDetails();
+    return await this.sellerService.getAllProductsDetails();
+   }
+
+   // 16
+   @Post('addReview')
+   async addReviewToAProduct(@Body() createReviewDto : CreateReviewDto) : Promise<Review>{
+    return await this.sellerService.addReviewToAProduct(createReviewDto);
    }
 
   
@@ -112,12 +120,22 @@ export class SellerController {
     return await this.sellerService.createNewProduct(createProductDto);
   }
 
-  // 13 🔴product er id add kivabe korbo 🤔😥
+  // 13 🟢🟢
   @Post('addAvailableQualityOfAProduct')
   async addAvailableQualityOfAProduct(@Body() createAvailableQualityOfAProductDto : CreateAvailableQualityOfAProductDto) : Promise<AvailableQuality> {
     return await this.sellerService.addAvailableQualityOfAProduct(createAvailableQualityOfAProductDto);
   }
 
+  // 15 🟢🟢
+  @Post('addSpecificationOfAProduct')
+  async addSpecificationOfAProduct(@Body() addSpecificationOfAProductDto : CreateAvailableQualityOfAProductDto) : Promise<Specification> {
+     // kono ekta category er product er jonno specification er title gula show korbe 
+  // so, kono ekta category er product er jonno specification title add korte hobe .. 
+
+    return await this.sellerService.addSpecificationOfAProduct(addSpecificationOfAProductDto);
+  }
+
+ 
  
 
    //////////////////////////////  🔰 seller logout

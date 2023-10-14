@@ -12,10 +12,13 @@ import { Order } from 'src/seller/entities/order.entity';
 import { Product } from 'src/seller/entities/product/product.entity';
 import { MessageService } from './message.service';
 import { AvailableQuality } from 'src/seller/entities/product/availableQuality.entity';
+import { Specification } from 'src/seller/entities/product/specificaiton.entity';
+import { Review } from 'src/seller/entities/product/review/review.entity';
+import { ReviewReply } from 'src/seller/entities/product/review/reviewReply.entity';
 
 @Module({
   // AvailableQuality er  kahini ta bujhlam na 
-  imports: [TypeOrmModule.forFeature([Message, Conversation, Seller, Order, Product, AvailableQuality]), SellerModule /*SellerModule*/],
+  imports: [TypeOrmModule.forFeature([Message, Conversation, Seller, Order, Product, AvailableQuality, Specification, Review,ReviewReply ]), SellerModule /*SellerModule*/],
   controllers: [MessageController],
   providers: [MessageService, SellerService, Repository ],
 })

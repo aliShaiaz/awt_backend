@@ -17,8 +17,11 @@ export class Order{
   sellerName : string; // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
   
 
-  @OneToMany(()=> Specification, (specification) => specification.order, {eager: true})
+  @OneToMany(()=> Specification, (specification) => specification.orderId, {eager: true})
   specifications : Specification[];
+  // 🔴 i think etar jonno alada Specification Entity create korte hobe 
+  // shetar nam hobe WantedSpecification Entity ..
+  // Buyer jei ta order korte chay .. shetar specification 
     
   @Column()
   price : number;

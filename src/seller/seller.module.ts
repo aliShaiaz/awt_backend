@@ -7,11 +7,12 @@ import { Product } from './entities/product/product.entity';
 import { Order } from './entities/order.entity';
 import { AvailableQuality } from './entities/product/availableQuality.entity';
 import { Specification } from './entities/product/specificaiton.entity';
-import { Review } from './entities/product/review.entity';
+import { Review } from './entities/product/review/review.entity';
 import { Repository } from 'typeorm';
+import { ReviewReply } from './entities/product/review/reviewReply.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review])],
+  imports: [TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review, ReviewReply])],
   controllers: [SellerController],
   providers: [SellerService, Repository],
 })

@@ -12,6 +12,13 @@ export class Specification{
 
     @Column('text', {default : ""})
     description: string;
+    /*
+    // now i title can have may be multiple description 🔴
+    // how we can design that ? 
+    // like screen can be of many size ..
+    // tile should be screen 
+    // description should be max size 
+    // small size */
 
     // 🔗 Many Specification To One Product 
     @ManyToOne(() => Product, (product) => product.specifications, {onDelete:'SET NULL'})
@@ -20,7 +27,7 @@ export class Specification{
    * // kono employee delete hoye gele .. task table er ei employee option e 
    * //null assign kore dibo .. jeno pore onno kono employee ke ei task assign kore deowa jete pare 
    */
-    product: Product;
+    productId: Product;
 
     // 🔗 Many Specification To One Product 
     @ManyToOne(() => Order, (order) => order.specifications, {onDelete:'SET NULL'})
@@ -29,6 +36,6 @@ export class Specification{
    * // kono employee delete hoye gele .. task table er ei employee option e 
    * //null assign kore dibo .. jeno pore onno kono employee ke ei task assign kore deowa jete pare 
    */
-    order: Order;
+    orderId ?: Order;
 
 }
