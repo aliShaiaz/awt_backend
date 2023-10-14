@@ -17,8 +17,8 @@ export class Order{
   sellerName : string; // ei field ta dorkar nai .. relationship create kore .. data niye ashte hobe
   
 
-  @OneToMany(()=> Specification, (specification) => specification.order)
-  specification : Specification[];
+  @OneToMany(()=> Specification, (specification) => specification.order, {eager: true})
+  specifications : Specification[];
     
   @Column()
   price : number;

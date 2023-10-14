@@ -7,18 +7,28 @@ export class Specification{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column('text', {default : ""})
     title: string;
 
-    @Column()
+    @Column('text', {default : ""})
     description: string;
 
     // 🔗 Many Specification To One Product 
-    @ManyToOne(() => Product, (product) => product.availableQuality)
+    @ManyToOne(() => Product, (product) => product.specifications, {onDelete:'SET NULL'})
+    /**
+   * whats the type, what does it map to on the other table or the entity
+   * // kono employee delete hoye gele .. task table er ei employee option e 
+   * //null assign kore dibo .. jeno pore onno kono employee ke ei task assign kore deowa jete pare 
+   */
     product: Product;
 
     // 🔗 Many Specification To One Product 
-    @ManyToOne(() => Order, (order) => order.specification)
+    @ManyToOne(() => Order, (order) => order.specifications, {onDelete:'SET NULL'})
+    /**
+   * whats the type, what does it map to on the other table or the entity
+   * // kono employee delete hoye gele .. task table er ei employee option e 
+   * //null assign kore dibo .. jeno pore onno kono employee ke ei task assign kore deowa jete pare 
+   */
     order: Order;
 
 }

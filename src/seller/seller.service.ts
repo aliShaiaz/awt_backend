@@ -157,18 +157,15 @@ export class SellerService {
     return `Cant find that User`;
   }
 
-  //8 done fully
+  //8 done fully 🔴 // id cant assign manually .. id set automatically
   async createNewProduct(createProductDto) : Promise<Product>{
     let newProduct;
-    console.log("------------------- from service -------------------");
     
     if(createProductDto.id){
-      console.log("------------------- from IF -------------------");
-    
+      // newProduct = { id : createProductDto.id, ...createProductDto}// 🔴id cant assign manually
       newProduct = {...createProductDto}
     }else{
-      console.log("------------------- from Else -------------------");
-    
+     
       newProduct = {id: Date.now(), ...createProductDto}
     }
     // 🛡️🛡️🛡️this.products.push(newProduct)

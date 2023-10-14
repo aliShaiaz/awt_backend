@@ -95,7 +95,7 @@ export class SellerController {
   }
 
 
-  // 8 🔰 Create a new Product
+  // 8 🔰 Create a new Product 🔴
    
   @Post('createProduct')// 📃1
   async createNewProduct(@Body() createProductDto) : Promise<Product> {

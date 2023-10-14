@@ -6,3 +6,18 @@
     if no value is given .. then 
     QueryFailedError: value "1697211488871" is out of range for type integer
     at PostgresQueryRunner.query (D:\Web Dev\NestJs\University\awt_backend\src\driver\postgres\PostgresQueryRunner.ts:299:19)
+
+        -> fix 
+            @PrimaryGeneratedColumn({ type: 'bigint' })
+            id:number;
+
+            if no id is given
+            ERROR [ExceptionsHandler] relatedEntities.forEach is not a function
+            TypeError: relatedEntities.forEach is not a function 
+
+    if we dont give availableQuality value , and give id 
+    QueryFailedError: invalid input syntax for type integer: ""
+
+    ===
+    Problem solved .. but id automaic assign hocche 
+    id nijer icchamoto asign kora jacche na 
