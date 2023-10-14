@@ -16,12 +16,14 @@ export class ReviewReply{
     @ManyToOne(() => Review, (review) => review.replies, {onDelete:'CASCADE'}) // onDelete:'SET NULL', 
     reviewId: Review;
 
-    @ManyToOne(() => ReviewReply, (reviewReply) => reviewReply.childReplies, { onDelete: 'CASCADE', nullable: true })
+    //🔴 circular dependency issue // partially solve 
+    @ManyToOne(() => ReviewReply, (reviewReply) => reviewReply.childReplies,{cascade: ['insert']} /*🟢solve ERROR by commenting this  [ExceptionsHandler] Maximum call stack size exceeded in nest js and typeorm { onDelete: 'CASCADE', nullable: true }*/)
     parentReply: ReviewReply; // The parent reply to which this reply is directed
 
 
+    // 🔴 circular dependency issue // partially solve 
     // one review can have many reply 
-    @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.parentReply, { eager: true, cascade: true })
+    @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.parentReply,{cascade: ['insert']}/* { eager: true, cascade: true }*/)
     childReplies: ReviewReply[]; // One review can have multiple replies
     // Multiple replies to this reply
 }

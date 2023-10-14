@@ -11,7 +11,8 @@ const config:any | PostgresConnectionOptions = {
   //entities : [Feedback, User], // dist er pore src thakbe na 
   autoLoadEntities : true, // // not for production version 
   synchronize : true, // production e true rakha jabe na  // 
-  
+  //lazyRelations : true
+  //logging : true,
 }
 
 export default config;

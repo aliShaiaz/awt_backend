@@ -49,7 +49,7 @@ export class SellerController {
     return this.sellerService.getPaymentCompleteStatusOfPreOrder();
   }
 
-   //14 🟢🟢
+   //14 🟢🟢🔴 // review add korar pore problem kortese 
    @Get('getAllProductsDetails')
    async getAllProductsDetails() : Promise<Product[]>{
     return await this.sellerService.getAllProductsDetails();

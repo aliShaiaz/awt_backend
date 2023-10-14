@@ -26,6 +26,7 @@ export class Review{
 
     
 
+    // 🔴 circular dependency issue // partially solve .. dont know how 
     // one review can have many reply 
     @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.reviewId, { eager: true, cascade: true })
     replies: ReviewReply[]; // One review can have multiple replies

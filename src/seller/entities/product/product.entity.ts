@@ -4,6 +4,7 @@ import { ReviewCategoryEnum } from "../../model/review.model";
 import { AvailableQuality } from "./availableQuality.entity";
 import { Specification } from "./specificaiton.entity";
 import { Review } from "./review/review.entity";
+// import { Lazy } from 'typeorm';
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn({ type: 'bigint' })
@@ -30,10 +31,11 @@ export class Product {
     automatic product er data er shathe availableQuality er data o dekhabe .. 
   */
  //🔰 etar value ENUM theke ashbe ..
-  @OneToMany(() => AvailableQuality, (availableQuality) => availableQuality.productId, {eager: true , cascade: true})//availableQuality table e product column na thakle error dibe 
+  @OneToMany(() => AvailableQuality, (availableQuality) => availableQuality.productId, {eager: true , cascade: true, lazy : true})//availableQuality table e product column na thakle error dibe 
   
   //@Generated() // 😥
-  availableQualitys  ?: AvailableQuality[]; //🔴🔗 One Product can have many quality 
+  availableQualitys  ?: AvailableQuality[]; //🔴🔗 One Product can have many quality
+  //availableQualitys  ?: Lazy<AvailableQuality[]>; //🔴🔗 One Product can have many quality 
   
   /*
   //🟢 category should be another table / entity .. product and category should have .... relationship 
@@ -42,7 +44,7 @@ export class Product {
   
   // One Product Can Have Many Specification 
   // 🔗 One Product can have many Specification 
-  @OneToMany(() => Specification, (specification) => specification.productId, {eager: true , cascade: true})
+  @OneToMany(() => Specification, (specification) => specification.productId, {eager: true , cascade: true, lazy : true})
   specifications:  Specification[];
     
   @OneToMany(() => Review, (review) => review.productId, {eager: true, cascade: true, lazy : true})

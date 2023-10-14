@@ -196,7 +196,7 @@ export class SellerService {
 
   // 14 🟢🟢
   async getAllProductsDetails(){
-    console.log("------------------- from service -------------------")
+
     return await this.productsRepository.find();
   }
 
