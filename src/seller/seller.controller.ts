@@ -8,6 +8,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from "multer";
 import { SellerService } from './seller.service';
 import { Product } from './entities/product/product.entity';
+import { AvailableQuality } from './entities/product/availableQuality.entity';
+import { CreateAvailableQualityOfAProductDto } from './dto/product/create-available-quality.dto';
 
 
 
@@ -43,6 +45,13 @@ export class SellerController {
   getPaymentCompleteStatusOfPreOrder(){
     return this.sellerService.getPaymentCompleteStatusOfPreOrder();
   }
+
+   //14 🟢⭕ may be it works .. lets try again 
+   @Get('getAllProductsDetails')
+   async getAllProductsDetails() : Promise<Product[]>{
+     console.log("------------------- from controller -------------------")
+     return await this.sellerService.getAllProductsDetails();
+   }
 
   
   //1 🔰create new seller 🟢🔴
@@ -95,13 +104,21 @@ export class SellerController {
   }
 
 
-  // 8 🔰 Create a new Product 🔴
+  // 8 🔰 Create a new Product 🟢🔴
    
   @Post('createProduct')// 📃1
   async createNewProduct(@Body() createProductDto) : Promise<Product> {
     console.log("------------------- from controller -------------------");
     return await this.sellerService.createNewProduct(createProductDto);
   }
+
+  // 13 🔴product er id add kivabe korbo 🤔😥
+  @Post('addAvailableQualityOfAProduct')
+  async addAvailableQualityOfAProduct(@Body() createAvailableQualityOfAProductDto : CreateAvailableQualityOfAProductDto) : Promise<AvailableQuality> {
+    return await this.sellerService.addAvailableQualityOfAProduct(createAvailableQualityOfAProductDto);
+  }
+
+ 
 
    //////////////////////////////  🔰 seller logout
    //////////////////////////////  🔰 seller forgot password 

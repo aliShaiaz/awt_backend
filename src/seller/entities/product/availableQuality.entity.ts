@@ -16,5 +16,7 @@ export class AvailableQuality{
    * // kono employee delete hoye gele .. task table er ei employee option e 
    * //null assign kore dibo .. jeno pore onno kono employee ke ei task assign kore deowa jete pare 
    */
-    product: Product;
+    productId: Product;
+    // ekhane ki product likhle valo hoito
+    // naki productId
 }

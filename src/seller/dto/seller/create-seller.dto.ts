@@ -4,7 +4,7 @@ export class CreateSellerDto {
   
   //@IsPositive()
   id ?: number;
-  @MaxLength(4) // working
+  @MaxLength(4) // working 
   sellerName : string;
   sellerDescription?:string;
   sellerImage ?: string;

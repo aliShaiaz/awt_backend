@@ -19,5 +19,5 @@
     QueryFailedError: invalid input syntax for type integer: ""
 
     ===
-    Problem solved .. but id automaic assign hocche 
+    Problem solved .. but 🔴 id automaic assign hocche 
     id nijer icchamoto asign kora jacche na 

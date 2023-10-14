@@ -30,7 +30,7 @@ export class Product {
     automatic product er data er shathe availableQuality er data o dekhabe .. 
   */
  //🔰 etar value ENUM theke ashbe ..
-  @OneToMany(() => AvailableQuality, (availableQuality) => availableQuality.product, {eager: true , cascade: true})//availableQuality table e product column na thakle error dibe 
+  @OneToMany(() => AvailableQuality, (availableQuality) => availableQuality.productId, {eager: true , cascade: true})//availableQuality table e product column na thakle error dibe 
   
   //@Generated() // 😥
   availableQualitys  ?: AvailableQuality[]; //🔴🔗 One Product can have many quality 

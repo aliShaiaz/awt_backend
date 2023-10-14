@@ -9,6 +9,7 @@ import { OrderStatusEnum, PaymentStatusEnum } from './model/preOrder.model';
 import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import { AvailableQuality } from './entities/product/availableQuality.entity';
 
 // Status📃(total: problem : )
 @Injectable()
@@ -17,8 +18,10 @@ export class SellerService {
   constructor(
     @InjectRepository(Seller) private sellersRepository: Repository<Seller>,
     @InjectRepository(Order) private ordersRepository: Repository<Order>,
-    @InjectRepository(Product) private productsRepository: Repository<Product>
+    @InjectRepository(Product) private productsRepository: Repository<Product>,
+    @InjectRepository(AvailableQuality) private availableQualitysRepository: Repository<AvailableQuality>
   
+    
   ){}
 
   /*
@@ -157,7 +160,7 @@ export class SellerService {
     return `Cant find that User`;
   }
 
-  //8 done fully 🔴 // id cant assign manually .. id set automatically
+  //8 🟢🔴 // id cant assign manually .. id set automatically
   async createNewProduct(createProductDto) : Promise<Product>{
     let newProduct;
     
@@ -175,6 +178,24 @@ export class SellerService {
     
     return newProduct;
   }
+
+  // 13 🔴 product er id add kivabe korbo 🤔😥
+  addAvailableQualityOfAProduct(createAvailableQualityOfAProductDto){
+    this.availableQualitysRepository.create(createAvailableQualityOfAProductDto);
+    this.availableQualitysRepository.save(createAvailableQualityOfAProductDto);
+    // return {
+    //   message : `New Available Quality Added`,
+    //   data : createAvailableQualityDto,
+    // }
+    return createAvailableQualityOfAProductDto;
+  }
+
+  // 14 🟢⭕ may be it works .. lets try again 
+  async getAllProductsDetails(){
+    console.log("------------------- from service -------------------")
+    return await this.productsRepository.find();
+  }
+
 
   // 9 done partially
   checkForStockAndsendStockLessNotification(){

@@ -11,10 +11,12 @@ import { Seller } from 'src/seller/entities/seller.entity';
 import { Order } from 'src/seller/entities/order.entity';
 import { Product } from 'src/seller/entities/product/product.entity';
 import { MessageService } from './message.service';
+import { AvailableQuality } from 'src/seller/entities/product/availableQuality.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, Conversation, Seller, Order, Product]), SellerModule /*SellerModule*/],
+  // AvailableQuality er  kahini ta bujhlam na 
+  imports: [TypeOrmModule.forFeature([Message, Conversation, Seller, Order, Product, AvailableQuality]), SellerModule /*SellerModule*/],
   controllers: [MessageController],
-  providers: [MessageService, SellerService, Repository],
+  providers: [MessageService, SellerService, Repository ],
 })
 export class MessageModule {}
