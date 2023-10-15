@@ -38,10 +38,10 @@ export class SellerController {
     return this.sellerService.checkForLowQuantity();
   }
 
-  // 10 🟢🟢🔴 give product id, who has negetive review .. also, give me those negetive review 
-  @Get('getNegetiveReview')// 9 📃
-  getNegetiveReview(){
-    return this.sellerService.getNegetiveReview();
+  // 10 🟢🟢 give product id, who has negetive review .. also, give me those negetive review 
+  @Get('getAllNegetiveReview')
+  getAllNegetiveReview(){
+    return this.sellerService.getAllNegetiveReview();
   }
 
   // 11🔰 give pre order information , if OrderStatus is Pending

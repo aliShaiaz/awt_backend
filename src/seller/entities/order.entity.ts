@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm"
 import { Specification } from "./product/specificaiton.entity";
 
 @Entity()
@@ -35,4 +35,11 @@ export class Order{
   orderStatus: string; //🔰 etar value ENUM theke ashbe .. 
   @Column()
   orderType: string ; // 🔰 General / Pre Order
+
+  @CreateDateColumn()
+  createdAt: Date; // Automatically saves the creation date and time
+
+  @UpdateDateColumn()
+  updatedAt: Date; // Automatically saves the last update date and time
+
 }

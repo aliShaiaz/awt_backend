@@ -1,6 +1,14 @@
+import { CreateDateColumn, UpdateDateColumn } from "typeorm";
+
 export class Notification{
   notificationId : number;
   notificationDetails :string;
+  @CreateDateColumn()
+  createdAt: Date; // Automatically saves the creation date and time
+
+  @UpdateDateColumn()
+  updatedAt: Date; // Automatically saves the last update date and time
+
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
 @Entity()
 export class Seller {
@@ -33,6 +33,13 @@ export class Seller {
   offlineShopAddress ?: string;
   @Column('text', {default : ""})
   googleMapLocation ?: string;
+
+  @CreateDateColumn()
+  createdAt: Date; // Automatically saves the creation date and time
+
+  @UpdateDateColumn()
+  updatedAt: Date; // Automatically saves the last update date and time
+
   //@Column('bytea', { nullable: true }) // Using 'bytea' type for image data
   //string; // Assuming you store image URLs here
 }

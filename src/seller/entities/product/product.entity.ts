@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Generated } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Generated, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
 import { ReviewCategoryEnum } from "../../model/review.model";
 import { AvailableQuality } from "./availableQuality.entity";
@@ -49,7 +49,13 @@ export class Product {
     
   @OneToMany(() => Review, (review) => review.productId, {eager: true, cascade: true, lazy : true})
   reviews : Review[]; //🔗 One Product can have many Review
-    
+  
+  @CreateDateColumn()
+  createdAt: Date; // Automatically saves the creation date and time
+
+  @UpdateDateColumn()
+  updatedAt: Date; // Automatically saves the last update date and time
+
 }
 /**
  * 

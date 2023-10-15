@@ -32,7 +32,13 @@ export class MessageService {
       messageId : Date.now(),
       senderEmail : senderEmail,
       receiverEmail : receiverEmail,
-      message : message
+      message : message,
+     
+  // createdAt: Date,
+
+
+  // updatedAt: Date
+
     }
 
     // check conversation already exist or not 
@@ -125,7 +131,7 @@ export class MessageService {
     
     // ei email gular // image and name show korbo .. 
     // conversationId niye .. message table er last message ta show korbo .. 
-    // mane hocche most recent message 
+    // mane hocche most recent message  
     
     //const {}
     // eta amader ke shob user return korbe Seller Service theke 

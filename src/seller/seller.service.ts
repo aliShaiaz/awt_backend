@@ -34,12 +34,12 @@ export class SellerService {
       */
 
   
-  private notifications: Notification[] = [
-    {
-      notificationId : 1,
-      notificationDetails : 'notification1',
-    },
-  ];
+  // private notifications: Notification[] = [
+  //   {
+  //     notificationId : 1,
+  //     notificationDetails : 'notification1',
+  //   },
+  // ];
 
   // 1 done // 🟢🔴
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
@@ -277,40 +277,23 @@ export class SellerService {
 
 
 
-  // 10  🟢🟢🔴
-  async getNegetiveReview(){
+  // 10  🟢🟢
+  async getAllNegetiveReview(){
     // amar product id gula dorkar 
     /**
      * seller er under e joto gula product er negative review ase
      * shegular product name, id and negetive review gula show korbe  
      */
-    /*
-    const negetiveReview = this.products.filter(product => product.review[0].reviewCategory === ReviewCategoryEnum.NegetiveReview);
-    */
+  const products = await this.productsRepository
+    .createQueryBuilder('product')
+    .select(['product.id', 'product.name'])
+    .leftJoin('product.reviews', 'review')
+    .where('review.reviewCategory = :category', { category: ReviewCategoryEnum.NegetiveReview })
+    .addSelect(['review.reviewDetails'])
+    .getMany();
 
-    const products = await this.productsRepository.find({
-      relations: ['reviews'],
-      where: {
-        reviews: {
-          reviewCategory: ReviewCategoryEnum.NegetiveReview,
-        },
-      },
-    });
-
-
-
-   return await products.map((product) => {
-      return {
-        id: product.id,
-        name: product.name,
-        // 🔴🔴 better hoito .. review tao dekhano gele .. 
-      };
-    });
+  return products;
   
-  
-    // const productsWithNegetiveReview = products.filter((product) => product.reviews.some((review) => review.reviewCategory === ReviewCategoryEnum.NegetiveReview));
-    //📃 ERROR [ExceptionsHandler] product.reviews.some is not a function
-
   }
 
   // 11 done partially

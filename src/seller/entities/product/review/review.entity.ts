@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Product } from "../product.entity";
 import { type } from "os";
 import { ReviewCategoryEnum } from "src/seller/model/review.model";
@@ -33,5 +33,11 @@ export class Review{
     // one review can have many reply 
     @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.reviewId, { eager: true, cascade: true })
     replies: ReviewReply[]; // One review can have multiple replies
+
+    @CreateDateColumn()
+  createdAt: Date; // Automatically saves the creation date and time
+
+  @UpdateDateColumn()
+  updatedAt: Date; // Automatically saves the last update date and time
 
 }
