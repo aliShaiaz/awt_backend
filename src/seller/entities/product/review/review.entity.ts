@@ -6,6 +6,9 @@ import { ReviewReply } from "./reviewReply.entity";
 // controller service  16 
 @Entity()
 export class Review{
+    // 🔴 timestamp add korte hobe ..
+    // database e create houar shomoy jeno
+    // automatically time add hoy  
     @PrimaryGeneratedColumn()
     reviewId: number;
 

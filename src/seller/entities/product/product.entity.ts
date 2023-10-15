@@ -22,7 +22,7 @@ export class Product {
   @Column({default : 0})
   availableQuantity : number; /// stockStatus nam e ki arekta field rakhar dorkar ase ?
   @Column({default : 0})
-  lowestValueToStock : number; // 🔰 available quantity , lowestValueToStock er shoman hoile seller er kas e notification jabe .. 
+  lowestQuantityToStock : number; // 🔰 available quantity , lowestQuantityToStock er shoman hoile seller er kas e notification jabe .. 
  
   /**
    * whats the type, what does it map to on the other table or the entity

@@ -13,6 +13,8 @@ import { CreateAvailableQualityOfAProductDto } from './dto/product/create-availa
 import { Specification } from './entities/product/specificaiton.entity';
 import { Review } from './entities/product/review/review.entity';
 import { CreateReviewDto } from './dto/product/review/create-review.dto';
+import { CreateReviewReplyDto } from './dto/product/review/create-reviewReply.dto';
+import { ReviewReply } from './entities/product/review/reviewReply.entity';
 
 
 
@@ -20,16 +22,23 @@ import { CreateReviewDto } from './dto/product/review/create-review.dto';
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
-  // 9 🔰 send notification to seller as a products available quality value is same as lowest value to stock 
+  /**
+   * 1. user jodi emon kono product search kore .. jeta 
+   *          ->  available na .. 
+   *          -> available but low quantity .. 
+   *    -> then seller er kase notification jabe .. 
+   */
 
-  // 8 📃
-  @Get('checkForStockLess') // Almost Stock Out .. 🔰 Low Quantity 
-  checkForStockAndsendStockLessNotification(){
-    console.log("WE ARE IN CONTROLLER ----------")
-    return this.sellerService.checkForStockAndsendStockLessNotification();
+  // 9 🔰 send notification to seller as a products available quality value is same as lowest value to stock 
+  //🟢🟢
+  @Get('checkForLowQuantity') // Almost Stock Out .. 🔰 Low Quantity 
+  checkForLowQuantity(){
+    // joto gula product low quantity .. tar ekta list dibe .. 
+    //console.log("WE ARE IN CONTROLLER ----------")
+    return this.sellerService.checkForLowQuantity();
   }
 
-  // 10🔰 give product id, who has negetive review .. also, give me those negetive review 
+  // 10 🟢🟢🔴 give product id, who has negetive review .. also, give me those negetive review 
   @Get('getNegetiveReview')// 9 📃
   getNegetiveReview(){
     return this.sellerService.getNegetiveReview();
@@ -55,11 +64,19 @@ export class SellerController {
     return await this.sellerService.getAllProductsDetails();
    }
 
-   // 16
+
+   // 16 🟢🟢
    @Post('addReview')
    async addReviewToAProduct(@Body() createReviewDto : CreateReviewDto) : Promise<Review>{
     return await this.sellerService.addReviewToAProduct(createReviewDto);
    }
+
+   // 17 🟢🟢
+   @Post('addReplyToAReview')
+   async addReplyToAReview(@Body() createReviewReplyDto : CreateReviewReplyDto) : Promise<ReviewReply>{
+    return await this.sellerService.addReplyToAReview(createReviewReplyDto);
+   }
+
 
   
   //1 🔰create new seller 🟢🔴

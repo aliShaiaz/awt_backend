@@ -212,15 +212,28 @@ export class SellerService {
   }
 
 
-  // 16 
+  // 16  🟢🟢
 
   async addReviewToAProduct(createReviewDto){
     const newReview = {...createReviewDto} ;
     this.reviewsRepository.create(newReview);
     this.reviewsRepository.save(newReview);
+    // 🔴 error handle kora hoy nai 
     return newReview;
     // return 
   }
+
+  // 17 🟢🟢 
+  async addReplyToAReview(createReviewReplyDto){
+    
+    let newReviewReply = {...createReviewReplyDto} ;
+    this.reviewRepliesRepository.create(newReviewReply);
+    this.reviewRepliesRepository.save(newReviewReply);
+    // 🔴 error handle kora hoy nai 
+    return newReviewReply;
+    // return 
+  }
+
 
 
 
@@ -244,17 +257,59 @@ export class SellerService {
     return `No Stock Less Product Found`;
   }
 
-  // 10 done partially 
-  getNegetiveReview(){
+  // 9 🟢🟢
+  async checkForLowQuantity(){
+    // custom query
+    const products = await this.productsRepository
+      .createQueryBuilder('product')
+      .where('product.availableQuantity <= product.lowestQuantityToStock')
+      .getMany();
+    
+    
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      availableQuantity: product.availableQuantity,
+      lowestValueToStock: product.lowestQuantityToStock,
+    }))
+    // error handling korte hobe .. 
+  }
+
+
+
+  // 10  🟢🟢🔴
+  async getNegetiveReview(){
     // amar product id gula dorkar 
+    /**
+     * seller er under e joto gula product er negative review ase
+     * shegular product name, id and negetive review gula show korbe  
+     */
     /*
     const negetiveReview = this.products.filter(product => product.review[0].reviewCategory === ReviewCategoryEnum.NegetiveReview);
-    if(negetiveReview.length > 0){
-      // 🔰 jeta korte hobe .. jei product gular negetive review ase .. shei product gular id, name and review gula niye object baniye return korte hobe .. 
-      return negetiveReview;
-    }
     */
-    return `No Negetive Review Found`;
+
+    const products = await this.productsRepository.find({
+      relations: ['reviews'],
+      where: {
+        reviews: {
+          reviewCategory: ReviewCategoryEnum.NegetiveReview,
+        },
+      },
+    });
+
+
+
+   return await products.map((product) => {
+      return {
+        id: product.id,
+        name: product.name,
+        // 🔴🔴 better hoito .. review tao dekhano gele .. 
+      };
+    });
+  
+  
+    // const productsWithNegetiveReview = products.filter((product) => product.reviews.some((review) => review.reviewCategory === ReviewCategoryEnum.NegetiveReview));
+    //📃 ERROR [ExceptionsHandler] product.reviews.some is not a function
 
   }
 

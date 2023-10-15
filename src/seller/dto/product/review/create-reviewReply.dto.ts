@@ -2,7 +2,8 @@ export class CreateReviewReplyDto {
   replyId ? : number;
   replyDetails: string;
   reviewId: number;// The ID of the associated review
-  parentReply: string; // The ID of the parent reply (or null if it's a top-level reply)
+  // parentReplyId?: number | null; // The ID of the parent reply (or null if it's a top-level reply)
+  // The ID of the parent reply (or null if it's a top-level reply)
   // parentReplyId -> from chatgpt 
   //childReplies: any[];
   /**
