@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ProductSortingService {
   constructor(
-    @InjectRepository(Product) private productRepository: Repositoryy<Product>,
+    @InjectRepository(Product) private productRepository: Repository<Product>,
    ){}
   async sortByMinPriceRange(min: number) {
     // find those product whose price is minium to min number and higher

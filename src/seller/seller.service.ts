@@ -106,23 +106,45 @@ export class SellerService {
       
 
       if(updateSellerDto.id){
-        seller.id = seller.id; // eta update kora jabe na .. 
-        // html input form er type rakhte hobe hidden 
+        seller.id = seller.id;  
+         
       }
       if(updateSellerDto.sellerName){
         seller.sellerName = updateSellerDto.sellerName;
       }
-      if(updateSellerDto.description){
-        seller.sellerDescription = updateSellerDto.description;
+      if(updateSellerDto.sellerEmailAddress){
+        seller.sellerEmailAddress = updateSellerDto.sellerEmailAddress;
+      }
+  
+      if(updateSellerDto.sellerPassword){
+        seller.sellerPassword = updateSellerDto.sellerPassword;
+      }
+      // if(updateSellerDto.sellerPhoneNumber){
+      //   seller.sellerPhoneNumber = updateSellerDto.sellerPhoneNumber;
+      // }
+      if(updateSellerDto.sellerDescription){
+        seller.sellerDescription = updateSellerDto.sellerDescription;
+      }
+      if(updateSellerDto.shopDescription){
+        seller.shopDescription = updateSellerDto.shopDescription;
       }
       if(updateSellerDto.shopName){
         seller.shopName = updateSellerDto.shopName;
       }
+      if(updateSellerDto.shopDescription){
+        seller.shopDescription = updateSellerDto.shopDescription;
+      }
       if(updateSellerDto.status){
         seller.status = updateSellerDto.status;
       }
+      
+      // reviewReplies[] er upor map kora jacche na .. 
+      // 🔴🔴🔴🔴 pore check korte hobe ..       
+      
+      
       //return seller;
-      await this.sellersRepository.update(id, seller);
+
+      // await this.sellersRepository.update(id, seller);
       await this.sellersRepository.save(seller);
       return this.findOne(id); // 😥
     }
