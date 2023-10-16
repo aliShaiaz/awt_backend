@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
 import { Message } from "./message.entity";
+import { Seller } from "src/seller/entities/seller.entity";
+import { Buyer } from "src/seller/entities/buyer.entity";
 
 @Entity()
 export class Conversation{
@@ -7,14 +9,19 @@ export class Conversation{
   conversationId : number;
   @Column()
   participantsEmail : string;
+
+  @ManyToOne(() => Seller, { nullable: true })
+  sellerId: Seller;
+
+  @ManyToOne(() => Buyer, { nullable: true })
+  buyerId: Buyer;
+
   @CreateDateColumn()
   timeStamps ?: Date;
 
   // 🔗One Conversation can have multiple messages
   @OneToMany(type => Message, message => message.conversation)
   message ? : Message[];
-
-  
 
 }
 /////////// One Conversation can have multiple messages

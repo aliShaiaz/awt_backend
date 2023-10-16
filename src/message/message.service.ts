@@ -8,6 +8,7 @@ import { SellerService } from 'src/seller/seller.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Repository } from 'typeorm';
+import { Buyer } from 'src/seller/entities/buyer.entity';
 
 @Injectable()
 export class MessageService {
@@ -21,27 +22,25 @@ export class MessageService {
   constructor(private sellerService : SellerService, 
     @InjectRepository(Message) private messagesRepository: Repository<Message>,
     @InjectRepository(Conversation) private conversationsRepository: Repository<Conversation>,
+    @InjectRepository(Seller) private sellersRepository: Repository<Seller>,
+    @InjectRepository(Buyer) private buyersRepository: Repository<Buyer>,
     ){}
 
    
 
   // I think done 🟢
-  async createNewMessage(createMessageDto /*: CreateMessageDto*/, senderEmail:string) : Promise<Message> {
-    const {receiverEmail, message} = createMessageDto;
+  async createNewMessage(createMessageDto /*: CreateMessageDto*//*, senderEmail:string*/) : Promise<Message> {
+    const {receiverEmail, message, senderEmail} = createMessageDto;
     const newMessage = {
       messageId : Date.now(),
-      senderEmail : senderEmail,
+      senderEmail : senderEmail, // html input type hidden 
       receiverEmail : receiverEmail,
       message : message,
-     
-  // createdAt: Date,
-
-
-  // updatedAt: Date
-
+      // createdAt: Date,
+      // updatedAt: Date
     }
-
     // check conversation already exist or not 
+    console.log(" ============== in service");
 
     const participant_email1 =  senderEmail+'-'+receiverEmail;
     const participant_email2 =  receiverEmail+'-'+senderEmail;
@@ -57,6 +56,7 @@ export class MessageService {
     });
     
     if(conversation){
+      console.log(" ============== conversation found");
       const { conversationId} = conversation;
       // conversation exist 
       // add message in message table 
@@ -70,14 +70,42 @@ export class MessageService {
 
       return newMessageWithConversationId;
     }else{
+      console.log(" ============== conversation does not exist");
       // conversation does not exist 
       // create a conversation with participant_email and timeStamps
+
+      //🟢check korte hobe sender and receiver seller and buyer database e ase kina
+      const participantsAreInDB = await this.sellersRepository.findOne({ 
+        where: [
+          {sellerEmailAddress : senderEmail},
+          {sellerEmailAddress : receiverEmail}
+        ]
+      });
+
+      if(participantsAreInDB){
+        console.log("sender email or receiver email are in sellerRepository ")
+      }else{
+        const participantsAreInDB =  await this.buyersRepository.findOne({ 
+          where: [
+            {BuyerEmail : senderEmail},
+            {BuyerEmail : receiverEmail}
+          ]
+        });
+
+        if(participantsAreInDB){
+          console.log("sender email or receiver email are in buyerRepository ")
+      
+        }
+        console.log("Cant found ------------------")
+      }
+
       
       // 🟢 lets call createNewConversation service function to do that 
       const newConversation = {
         participantsEmail : participant_email1,
         timeStamps : Date.now()
       }
+      console.log(" ============== newConversation Creation done");
       const newCreatedConversation =  await this.createNewConversation(newConversation);
       const newlyCreatedConversationId = newCreatedConversation.conversationId;
 
@@ -98,11 +126,15 @@ export class MessageService {
 
   // I think done 🟢
   async createNewConversation(createConversationDto/*: CreateConversationDto */) : Promise<Conversation> {
-    const {participantsEmail, timeStamps} = createConversationDto;
+    const {participantsEmail, timeStamps, sellerId, buyerId} = createConversationDto;
+    // participantsEmail er throw te .. seller and buyer er id khuje ber korte hobe 
+    // then sheta newConversation object er vitor e pass korte hobe 
     const newConversation = {
       conversationId : Date.now(),
       participantsEmail : participantsEmail,
-      timeStamps : timeStamps
+      timeStamps : timeStamps,
+      sellerId : sellerId,
+      buyerId : buyerId 
     }
     this.conversationsRepository.create(newConversation);
     return newConversation;

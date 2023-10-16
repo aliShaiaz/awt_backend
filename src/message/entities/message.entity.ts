@@ -19,9 +19,7 @@ export class Message{
   // 🔗One Conversation can have multiple messages
   // i mean many message to  One Conversation
   @ManyToOne(type => Conversation, conversation => conversation.message)
-  conversation ? : Conversation;
-
-  
+  conversation ? : Conversation;  
 }
 ////////// Multiple Message can be in one Conversation
 

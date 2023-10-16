@@ -18,15 +18,16 @@ export class MessageController {
 
 
   // I think done 🟢 ✔️ initial Test Done
-  @Post(/*'createNewMessage'*/ 'createNewMessageAgain')
+  @Post(/*'createNewMessage'*/ 'createNewMessage')
   async createNewMessage(
     @Body() createMessageDto /*: CreateMessageDto*/ ,
-    @Query('senderEmail') senderEmail: string, //😢 sender email ki evabe send kora thik hobe ? 
+    //@Query('senderEmail') senderEmail: string, //😢 sender email ki evabe send kora thik hobe ? 
   ) : Promise<Message> {
     //message 
     //receiverEmail
     //senderEmail
-    return await this.messageService.createNewMessage(createMessageDto, senderEmail);
+    console.log(" ============== in controller");
+    return await this.messageService.createNewMessage(createMessageDto);
   }
 
   // I think done 🟢
