@@ -34,6 +34,7 @@ export class Buyer {
   @OneToMany(() => Order, (order) => order.orderId)
   Orders : Order[] // 🔴😥 not sure 
 
+
   @OneToMany(() => Message, (message) => message.messageId)
-  messages: Message[];
+  messages: Message[];// 🔴😥 not sure 
 }
