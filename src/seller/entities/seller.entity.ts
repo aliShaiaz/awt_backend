@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
+import { ReviewReply } from "./product/review/reviewReply.entity";
 
 @Entity()
 export class Seller {
@@ -42,6 +43,10 @@ export class Seller {
 
   //@Column('bytea', { nullable: true }) // Using 'bytea' type for image data
   //string; // Assuming you store image URLs here
+  // 🟢 seller can give reviewReply one to many 
+  @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.sellerId, { eager: true, cascade: true })
+  reviewReplies : ReviewReply[]; // One seller can have multiple reviewReply 
+
 }
 
 

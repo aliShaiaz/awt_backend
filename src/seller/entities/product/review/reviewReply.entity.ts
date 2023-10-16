@@ -3,6 +3,7 @@ import { Product } from "../product.entity";
 import { type } from "os";
 import { ReviewCategoryEnum } from "src/seller/model/review.model";
 import { Review } from "./review.entity";
+import { Seller } from "../../seller.entity";
 @Entity()
 export class ReviewReply{
     @PrimaryGeneratedColumn()
@@ -30,7 +31,12 @@ export class ReviewReply{
     @CreateDateColumn()
   createdAt: Date; // Automatically saves the creation date and time
 
-  @UpdateDateColumn()
+  @UpdateDateColumn() 
   updatedAt: Date; // Automatically saves the last update date and time
+
+  //🟢 seller can give reviewReply many to one 
+  @ManyToOne(() => Seller, (seller) => seller.reviewReplies, {onDelete:'CASCADE'},) // onDelete:'SET NULL',
+  sellerId : number; // One seller can have multiple reviewReply
+
 
 }

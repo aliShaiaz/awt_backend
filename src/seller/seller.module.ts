@@ -10,9 +10,11 @@ import { Specification } from './entities/product/specificaiton.entity';
 import { Review } from './entities/product/review/review.entity';
 import { Repository } from 'typeorm';
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
+import { Category } from './entities/product/category.entity';
+import { Brand } from './entities/product/brand.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review, ReviewReply])],
+  imports: [TypeOrmModule.forFeature([Seller, Order, Product, Category, Brand, AvailableQuality, Specification, Review, ReviewReply])],
   controllers: [SellerController],
   providers: [SellerService, Repository],
 })
