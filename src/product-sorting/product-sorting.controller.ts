@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProductSortingService } from './product-sorting.service';
-import { CreateProductSortingDto } from './dto/create-product-sorting.dto';
-import { UpdateProductSortingDto } from './dto/update-product-sorting.dto';
 
 @Controller('product-sorting')
 export class ProductSortingController {
@@ -38,10 +36,7 @@ export class ProductSortingController {
    * 
    */
 
-  @Post()
-  create(@Body() createProductSortingDto: CreateProductSortingDto) {
-    return this.productSortingService.create(createProductSortingDto);
-  }
+  
 
   @Get()
   findAll() {
@@ -53,10 +48,7 @@ export class ProductSortingController {
     return this.productSortingService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductSortingDto: UpdateProductSortingDto) {
-    return this.productSortingService.update(+id, updateProductSortingDto);
-  }
+  
 
   @Delete(':id')
   remove(@Param('id') id: string) {
