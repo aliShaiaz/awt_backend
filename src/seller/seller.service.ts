@@ -53,7 +53,7 @@ export class SellerService {
       newSeller = {id: Date.now(), ...createSellerDto}
       //newSeller = {...createSellerDto}
     }
-    this.sellersRepository.create(newSeller);
+    //this.sellersRepository.create(newSeller);
     await this.sellersRepository.save(newSeller);
     return newSeller;
   }
