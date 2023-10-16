@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductSortingService } from './product-sorting.service';
 
-@Controller('product-sorting')
+@Controller('seller/product-sorting')
 export class ProductSortingController {
   constructor(private readonly productSortingService: ProductSortingService) {}
 
@@ -24,6 +24,8 @@ export class ProductSortingController {
    * 4. sort products by 
    * 
    */
+
+
   @Get('price-range-l') // 🔴 same route rakha jabe na ?
     sortAllByMinPriceRange(@Query('min', ParseIntPipe) min: number) {
     return this.productSortingService.sortByMinPriceRange(min);

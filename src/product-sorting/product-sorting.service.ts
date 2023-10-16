@@ -14,8 +14,6 @@ export class ProductSortingService {
       .createQueryBuilder('product')
       .where('product.price >= :min', { min })
       .getMany();
-
-    
   }
 
   async sortAllByMaxPriceRange(max : number) {
