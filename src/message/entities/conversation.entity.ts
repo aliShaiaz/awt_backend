@@ -5,7 +5,7 @@ import { Buyer } from "src/seller/entities/buyer.entity";
 
 @Entity()
 export class Conversation{
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   conversationId : number;
   @Column()
   participantsEmail : string;

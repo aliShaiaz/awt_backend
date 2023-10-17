@@ -3,7 +3,7 @@ import { Conversation } from "./conversation.entity";
 
 @Entity()
 export class Message{
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   messageId : number;
   @Column()
   senderEmail : string;

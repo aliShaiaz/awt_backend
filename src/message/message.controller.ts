@@ -26,7 +26,7 @@ export class MessageController {
     //message 
     //receiverEmail
     //senderEmail
-    console.log(" ============== in controller");
+   
     return await this.messageService.createNewMessage(createMessageDto);
   }
 

@@ -7,28 +7,28 @@ export class Buyer {
   @PrimaryGeneratedColumn()
   BuyerId: number;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerFirstName: string;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerLastName: string;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerPassword: string;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerEmail: string;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerDOB: Date;
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerPhoneNo: string;
 
   // @Column()
   // BuyerGender: string; // gender upor base kore .. take product show korbo 
 
-  @Column()
+  @Column('text', {default : ""})
   BuyerAddress: string; //  arekta table create korte hobe .. jekhane details thakbe .. 
   
   @OneToMany(() => Order, (order) => order.orderId)
