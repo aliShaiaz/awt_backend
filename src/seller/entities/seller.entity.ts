@@ -44,7 +44,7 @@ export class Seller {
   //@Column('bytea', { nullable: true }) // Using 'bytea' type for image data
   //string; // Assuming you store image URLs here
   // 🟢 seller can give reviewReply one to many 
-  @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.sellerId, { eager: true, cascade: true })
+  @OneToMany(() => ReviewReply, (reviewReply) => reviewReply.sellerId, { /*🟢🟢🟢🟢🟢eager: true, */ cascade: true })
   reviewReplies : ReviewReply[]; // One seller can have multiple reviewReply 
 
 }

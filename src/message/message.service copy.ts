@@ -159,7 +159,7 @@ export class MessageService {
   }
 
   // I think done 🟢
-  async createNewConversation(createConversationDto/*: CreateConversationDto */) {
+  async createNewConversation(createConversationDto/*: CreateConversationDto */) : Promise<Conversation> {
     const {participantsEmail, timeStamps, sellerId, buyerId, lastMessage} = createConversationDto;
     // participantsEmail er throw te .. seller and buyer er id khuje ber korte hobe 
     // then sheta newConversation object er vitor e pass korte hobe 
@@ -180,11 +180,15 @@ export class MessageService {
   }
   
   async showAllConversationToCurrentLoggedInUser(currentLoggedInUserEmail : string) /*:Promise<Conversation[]>*/ {   
+    // console.log("In service ... 1")
+    // current logged in user jodi participant email er moddhe thake .. taile shei conversation show korbo
     
-    console.log(currentLoggedInUserEmail)
-//////////////////////////////////////////////////////////////////
-    // 1. current logged in user conversation er participantEmail er moddhe ase kina check korbo
-    //    shei conversation gula niye ashbo 
+    //🟢🟢🟢🟢 const conversations = await this.conversationsRepository.find({
+    //   where: [
+    //     { participantsEmail: currentLoggedInUserEmail }, // 🛡️🛡️🛡️ not sure .. 
+    //   ]
+    // });
+
     const conversations = await this.conversationsRepository
       .createQueryBuilder('conversation')
       .where('conversation.participantsEmail ILIKE :email', {
@@ -192,12 +196,40 @@ export class MessageService {
       })
       .getMany();
 
-    const participantsEmail = conversations.map(conversation => conversation.participantsEmail);
-    const filteredParticipantsEmail1 = participantsEmail.map(participantEmail => participantEmail.replace(currentLoggedInUserEmail+'-',''));
-    const filteredParticipantsEmail2 = filteredParticipantsEmail1.map(participantEmail => participantEmail.replace('-'+currentLoggedInUserEmail,''));
-    
+    if(conversations){
+      // console.log("found conversations ...OK 2" , conversations);
+    }
 
-    console.log(filteredParticipantsEmail2)
+
+    const participantsEmail = conversations.map(conversation => conversation.participantsEmail);
+
+    // ekhon participantsEmail er moddhe theke currentLoggedInUserEmail remove kore dibo
+
+    if(participantsEmail){
+      // console.log("found participantsEmail ... 3", participantsEmail)
+    }
+    
+    
+    // for participant_email1 =  senderEmail+'-'+receiverEmail;
+    const filteredParticipantsEmail1 = participantsEmail.map(participantEmail => participantEmail.replace(currentLoggedInUserEmail+'-',''));
+    // for participant_email2 =  receiverEmail+'-'+senderEmail;
+    const filteredParticipantsEmail2 = filteredParticipantsEmail1.map(participantEmail => participantEmail.replace('-'+currentLoggedInUserEmail,''));
+    // remove done 🟢
+
+    if(filteredParticipantsEmail1 && filteredParticipantsEmail2){
+      //console.log("found filteredParticipantsEmail 1 and 2 ... done 4",filteredParticipantsEmail2 )
+    }
+
+    // ei email gular // image and name show korbo .. 
+    // conversationId niye .. message table er last message ta show korbo .. 
+    // mane hocche most recent message  
+
+    // 🟢🟢🟢 ekhon buyer table and seller table dui table thekei amake email address er against e 
+    // seller or buyer er  name and image ta ber korte hobe ..
+    
+    const emailToString = filteredParticipantsEmail2.toString();
+    
+    //const buyers = await this.buyersRepository.find();
 
     const buyers = await this.buyersRepository.find({
       select: ["BuyerFirstName", "BuyerId", "BuyerEmail"], // Select only the 'name' column
@@ -206,94 +238,89 @@ export class MessageService {
       },
     });
 
+    // console.log("---- buyers ---", buyers);
+
     const sellers = await this.sellersRepository.find({
       select: ["sellerName", "id", "sellerEmailAddress"], // Select only the 'name' column
       
       where: {
         sellerEmailAddress: In(filteredParticipantsEmail2), // Match against the list of emails
       },
-      
     });
 
-    console.log(buyers)
-    console.log(sellers)
+    // console.log("---- sellers ---", sellers);
 
-    const lastMessageOfEachConversationWhichContainsCurrentLogginUser = conversations.map(conversation => {
-      const {lastMessage, participantsEmail} = conversation;
-      const filteredParticipantsEmail = participantsEmail.replace(currentLoggedInUserEmail+'-','');
-      const filteredParticipantsEmail2 = filteredParticipantsEmail.replace('-'+currentLoggedInUserEmail,'');
-      const lastMessageOfEachConversation = {
-        lastMessage : lastMessage,
-        participantsEmail : filteredParticipantsEmail2
-      }
-      return lastMessageOfEachConversation;
-    })
 
-    let buyerConversation = []; 
+    /**
+     * 
+     */
 
-    console.log(lastMessageOfEachConversationWhichContainsCurrentLogginUser)
-    const callNewMethod = (buyer, lastMessage) => {
-      console.log("======== 3")
-      const buyerWithLastMessage = {
-        ...buyer,
-        lastMessage: lastMessage,
-      };
-      buyerConversation.push(buyerWithLastMessage);
+    // const conversation = await this.conversationsRepository
+    //   .createQueryBuilder('conversation')
+    //   .select('conversation.lastMessage', 'lastMessage')
+    //   .where('conversation.participantsEmail = :participantsEmail', { filteredParticipantsEmail2 })
+    //   .getOneOrFail();
+    const conversation = await this.conversationsRepository
+  .createQueryBuilder('conversation')
+  .select('conversation.lastMessage', 'lastMessage')
+  .where('conversation.participantsEmail = :participantsEmail', {
+    participantsEmail: filteredParticipantsEmail2,
+  })
+  .getMany();
+
+
+    console.log("conversation =>>>>=>>>>", conversation)
+
+    const  selectedProperties2 : any = await buyers.map(buyer => {
+      //let filterBro = findMessageFromMessageRepoByEmail(buyer.BuyerEmail);
       
+      // lets pull conversations last message by email 
+      // conversations er participants email er moddhe jodi buyer er email exist kore 
+      // tahole .. last message ta show korbo 
+
+      return {
+        userName : buyer.BuyerFirstName,
+        userPhoneNumber : buyer.BuyerPhoneNo,
+        message : conversation
+      }
+    });
+
+    console.log("filteredMessages1->>>>> : :::::" , selectedProperties2);
+
+
+    const findMessageFromMessageRepoByEmail = (email) =>{ 
+      let filteredMessages1 : any  = this.messagesRepository.find({
+        where: [
+          { senderEmail: email }, // Or Logic
+          { receiverEmail: email }, // 
+        ]
+      });
+      return filteredMessages1;
     }
 
-  
-    const buyersConversation  = buyers.map(buyer => {
-     lastMessageOfEachConversationWhichContainsCurrentLogginUser.map(conversation => {
-       console.log("======== 1")
-        if(conversation.participantsEmail == buyer.BuyerEmail){
-          console.log("======== 2")
-          
-          // console.log(buyer);
-          // console.log(email.participantsEmail, email.lastMessage)
-          callNewMethod(buyer, conversation.lastMessage);
+    ;
+    
+
+
+      const  selectedProperties1 : any =  sellers.map(seller => {
+        const filteredMessages1 : any = this.messagesRepository.find({
+          where: [
+            { senderEmail: seller.sellerEmailAddress }, // Or Logic
+            { receiverEmail: seller.sellerEmailAddress }, // 
+          ]
+        });
+
+        
+        return {
+          userName : seller.sellerName,
+          userPhoneNumber : seller.sellerPhoneNumber,
+          message : filteredMessages1
         }
-      })
+      });  
       
-    });
+      console.log("filteredMessages1 : :::::" , selectedProperties1);
 
 
-    // 🟢 finally working .. Alhamdulillah
-  // buyerConversation.map(buyer => {
-  //   console.log("buyer:::::::",buyer )
-  // })
-    //console.log(buyersConversation)
-
-    
-////////////////////////////////////////////
-
-    // lets do same thing for seller 
-    // but first lets return that 
-    // return buyerConversation;
-
-    // well done .. 
-    // lets do same thing for seller
-
-    const sellersConversation  = sellers.map(seller => {
-      lastMessageOfEachConversationWhichContainsCurrentLogginUser.map(conversation => {
-        console.log("======== 1")
-         if(conversation.participantsEmail == seller.sellerEmailAddress){
-           console.log("======== 2")
-           
-           // console.log(buyer);
-           // console.log(email.participantsEmail, email.lastMessage)
-           callNewMethod(seller, conversation.lastMessage);
-         }
-       })
-       
-     });
-
-    
-    // buyerConversation.map(buyer => {
-    // console.log("buyer:::::::",buyer )
-    // })
-  return buyerConversation;
-    /////////////////////////////////////////////////////////////
   }
 
   async showAllMessageOfAConversation(conversationId){

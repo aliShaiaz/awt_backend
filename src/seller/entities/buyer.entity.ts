@@ -23,7 +23,7 @@ export class Buyer {
   BuyerDOB: Date;
 
   @Column('text', {default : ""})
-  BuyerPhoneNo: string;
+  BuyerPhoneNo: string; // phone number show hide rakhar condition rakha jabe 
 
   // @Column()
   // BuyerGender: string; // gender upor base kore .. take product show korbo 

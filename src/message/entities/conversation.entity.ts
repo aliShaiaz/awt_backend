@@ -10,6 +10,9 @@ export class Conversation{
   @Column()
   participantsEmail : string;
 
+  @Column()
+  lastMessage : string|null;
+
   @ManyToOne(() => Seller, { nullable: true })
   sellerId: Seller;
 
