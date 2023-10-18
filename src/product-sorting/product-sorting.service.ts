@@ -75,11 +75,11 @@ export class ProductSortingService {
     
   }
 
-  sortProductByCategory(category) {
-    if(category){
+  sortProductByCategory(Category : String) {
+    if(Category){
       return this.productRepository
       .createQueryBuilder('product')
-      .where('product.category = :category', { category })
+      .where('product.Category = :Category', { Category })
       .getMany();
 
     }

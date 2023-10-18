@@ -71,7 +71,7 @@ export class MessageService {
       
       //this.messages.push(newMessageWithConversationId);
       await this.messagesRepository.create(newMessageWithConversationId);
-
+      await this.messagesRepository.save(newMessageWithConversationId);
       return newMessageWithConversationId;
     }else{
       console.log(" ============== conversation does not exist============");

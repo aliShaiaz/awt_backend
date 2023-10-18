@@ -47,7 +47,7 @@ export class ProductSortingController {
     return this.productSortingService.sortProductByBrand(brand);
   }
   
-  @Get()
+  @Get('category')
   sortProductByCategory(@Query('category') category: string) {
     return this.productSortingService.sortProductByCategory(category);
   }
