@@ -52,12 +52,12 @@ export class Product {
   @OneToMany(() => Review, (review) => review.productId, {eager: true, cascade: true, lazy : true})
   reviews : Review[]; //🔗 One Product can have many Review
   
-  @ManyToOne(() => Category, (category) => category.productId, /*{eager: true, cascade: true, lazy : true} */)
+  @ManyToOne(() => Category, (category) => category.productId,{eager : true} /*{eager: true, cascade: true, lazy : true} */)
   Category : Category; 
 
-  @ManyToOne(() => Brand, (brand) => brand.productId,/*{eager: true, cascade: true, lazy : true} */)
+  @ManyToOne(() => Brand, (brand) => brand.productId,{eager : true}/*{eager: true, cascade: true, lazy : true} */)
   Brand : Brand; 
-
+ 
   @CreateDateColumn()
   createdAt: Date; // Automatically saves the creation date and time
 
