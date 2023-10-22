@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SellerModule } from './seller/seller.module';
 import { MessageModule } from './message/message.module';
 import { ProductSortingModule } from './product-sorting/product-sorting.module';
+import { SellerAuthModule } from './seller-auth/seller-auth.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { ProductSortingModule } from './product-sorting/product-sorting.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    SellerAuthModule,
     ],
   providers: [],
   

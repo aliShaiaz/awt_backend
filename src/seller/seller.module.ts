@@ -15,8 +15,9 @@ import { Brand } from './entities/product/brand.entity';
 import { Buyer } from './entities/buyer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Seller,Buyer, Order, Product, Category, Brand, AvailableQuality, Specification, Review, ReviewReply])],
+  imports: [SellerModule,TypeOrmModule.forFeature([Seller,Buyer, Order, Product, Category, Brand, AvailableQuality, Specification, Review, ReviewReply])],
   controllers: [SellerController],
   providers: [SellerService, Repository],
+  exports: [SellerService], // (we'll soon use it in our seller-auth service).
 })
 export class SellerModule {}

@@ -90,6 +90,22 @@ export class SellerService {
     //return this.sellers.find(seller => seller.id == id);
   }
 
+  // this is for jwt authentication login .. called in seller-auth.service.ts
+  async findOneByEmail(email: string): Promise<Seller> {
+    if (email != null && email != undefined) {
+        try {
+            return await this.sellersRepository.findOneOrFail({
+                where: { sellerEmailAddress : email }
+            });
+        } catch (error) {
+            // Handle the error when the seller with the given email is not found.
+            throw new Error(`Seller with email ${email} not found`);
+        }
+    }
+    // Handle the case when email is null or undefined (optional).
+    return null;
+}
+
   // 4 done 🟢🔴 // kichu field er logic add korte hobe .. kono error nai 
   async update(id: number, updateSellerDto: UpdateSellerDto) : Promise<Seller | string>  {
     // let seller = this.sellers.find(seller => seller.id === id);
@@ -172,7 +188,7 @@ export class SellerService {
   }
 
   // 6 done fully🔴
-  sellerLogin(loginSellerDto){ 
+  sellerLogin(req){ 
     
     // const seller = this.sellers.find(seller => seller.sellerEmailAddress == loginSellerDto.sellerEmailAddress && seller.sellerPassword == loginSellerDto.sellerPassword);
    
@@ -182,8 +198,7 @@ export class SellerService {
     //   // id destructure kore id return korte pari .. 
     //   return 2;
     // }
-    
-    return `Cant find that User`;
+    return req.user;
   }
 
   //8 🟢🔴 // id cant assign manually .. id set automatically

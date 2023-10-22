@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request } from '@nestjs/common';
 
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
@@ -15,6 +15,8 @@ import { Review } from './entities/product/review/review.entity';
 import { CreateReviewDto } from './dto/product/review/create-review.dto';
 import { CreateReviewReplyDto } from './dto/product/review/create-reviewReply.dto';
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from 'src/seller-auth/local-auth.guard';
 
 
 
@@ -123,9 +125,16 @@ export class SellerController {
   }
 
   // 6 🔰 seller login 🔴
+  // @UseGuards(AuthGuard('local'))
+  // @Post('sellerLogin')// 📃2
+  // sellerLogin(@Body() loginSellerDto) {
+  //   return this.sellerService.sellerLogin(loginSellerDto);
+  // }
+
+  @UseGuards(LocalAuthGuard)
   @Post('sellerLogin')// 📃2
-  sellerLogin(@Body() loginSellerDto) {
-    return this.sellerService.sellerLogin(loginSellerDto);
+  sellerLogin(@Request() req) {
+    return this.sellerService.sellerLogin(req);
   }
 
 

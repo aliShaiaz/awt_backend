@@ -19,7 +19,8 @@ export class MessageService {
    * ❓seller service e ekta variable declare kora ase ... sheta amar message service e access 
    * kora lagbe .. ekhon ami ki korbo .. 
    */
-  constructor(private sellerService : SellerService, 
+  constructor(
+    private sellerService : SellerService, 
     @InjectRepository(Message) private messagesRepository: Repository<Message>,
     @InjectRepository(Conversation) private conversationsRepository: Repository<Conversation>,
     @InjectRepository(Seller) private sellersRepository: Repository<Seller>,
