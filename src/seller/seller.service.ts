@@ -65,17 +65,28 @@ export class SellerService {
 
 
   // 🔴🔴🔴 need to test
-  createWithImage(createSellerDto: CreateSellerDto, file) : Seller {
+  async createWithImage(createSellerDto: CreateSellerDto, files/*: Express.Multer.File[]*/) : Promise<Seller> {
+    console.log("in service ====================");
+    console.log("createSellerDto : ", createSellerDto);
+    console.log("files : ", files);
+    const sellerImages = files.map(file => file.filename); // but may be file name modify kora lagbe .. 
     let newSeller;
     if(createSellerDto.id){
-      newSeller = {...createSellerDto, sellerImage: file}
+      newSeller = {...createSellerDto, sellerImage: sellerImages[0], shopLogo: sellerImages[1]}
     }else{
-      newSeller = {id: Date.now(), ...createSellerDto, sellerImage: file}
+      newSeller = {id: Date.now(), ...createSellerDto, sellerImage: sellerImages[0], shopLogo: sellerImages[1]}
     }
     //🛡️🛡️🛡️this.sellers.push(newSeller)
+    await this.sellersRepository.save(newSeller);
     return newSeller;
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////
+  uploadAgain(sellerImage,shopLogo, createProductDto){
+    console.log(" In service ====================, file", sellerImage, shopLogo);
+    console.log(" In service ==================== createProductDto", createProductDto);
+    // console.log(file);
+  }
   
 
   // 2 🟢🟢
@@ -229,6 +240,7 @@ export class SellerService {
     return newProduct;
   }
 
+
   // 13 🟢🟢
   addAvailableQualityOfAProduct(createAvailableQualityOfAProductDto){
     this.availableQualitysRepository.create(createAvailableQualityOfAProductDto);
@@ -369,6 +381,9 @@ export class SellerService {
   postImage(file){
     console.log(file);
   }
+
+  
+  
 
   // send email 
   async sendEmail(to, emailSubject, emailBody){

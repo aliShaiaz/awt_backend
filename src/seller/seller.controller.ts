@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request, UploadedFiles } from '@nestjs/common';
 
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
 import { Seller } from './entities/seller.entity';
 ////////////////////
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from "multer";
 import { SellerService } from './seller.service';
 import { Product } from './entities/product/product.entity';
@@ -90,6 +90,7 @@ export class SellerController {
 
 
   
+  
   //1 🔰create new seller 🟢🔴
 
   //@UsePipes(new ValidationPipe())// Apply the validation
@@ -100,12 +101,9 @@ export class SellerController {
   }
 
   
+ ////////////////////////////////////////////////////////////////////////////////////////////
 
-
-  @Post('withImage')
-  createWithImage(@Body() createSellerDto: CreateSellerDto, @UploadedFile() file: Express.Multer.File) {
-    return this.sellerService.createWithImage(createSellerDto, file);
-  }
+  
 
   //2 🔰get all seller 🟢🟢
   @Get()// 📃6
@@ -208,13 +206,62 @@ export class SellerController {
   }))
   postImage(@UploadedFile() file: Express.Multer.File): void
   {
-    this.sellerService.postImage(file);
-    
+    console.log("================ in controller======")
+    //this.sellerService.postImage(file);
   }
 
- 
-
-
+  
+  
+  
+  @Post('uploadAgain')
+  // 🟢 for single file upload 
+  // @UseInterceptors(
+  //   FileInterceptor('sellerImage', 
+  // { fileFilter: (req, file, cb) => {
+  //         if (file.originalname.match(/^.*\.(jpg)$/))
+  //         cb(null, true);
+  //         else {
+  //         cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+  //         }
+  // },
+  // limits: { fileSize: 9000000 },
+  // storage:diskStorage({
+  // destination: './uploads',
+  // filename: function (req, file, cb) {
+  // cb(null,Date.now()+file.originalname)
+  // },
+  // })
+  // }), 
+  // )
+  // 🟢 for multiple file upload // maxCount 1
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'sellerImage', maxCount: 1 },
+    { name: 'shopLogo', maxCount: 1 },
+  ],{ fileFilter: (req, file, cb) => {
+    if (file.originalname.match(/^.*\.(jpg)$/))
+    cb(null, true);
+    else {
+    cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+    }
+},
+limits: { fileSize: 9000000 },
+storage:diskStorage({
+destination: './uploads',
+filename: function (req, file, cb) {
+cb(null,Date.now()+file.originalname)
+},
+})
+}))
+  //uploadAgain(@UploadedFile() sellerImage: Express.Multer.File, @UploadedFile() shopLogo: Express.Multer.File, @Body() createSellerDto: CreateSellerDto): void
+  uploadAgain(
+    @UploadedFiles() files: {
+      sellerImage?: Express.Multer.File[],
+      shopLogo?: Express.Multer.File[] 
+    }, @Body() createSellerDto: CreateSellerDto): void
+  {
+   this.sellerService.uploadAgain(files.sellerImage,files.shopLogo, createSellerDto);
+    
+  }
   
 
 }
