@@ -9,11 +9,19 @@ import { AvailableQuality } from 'src/seller/entities/product/availableQuality.e
 import { Specification } from 'src/seller/entities/product/specificaiton.entity';
 import { Review } from 'src/seller/entities/product/review/review.entity';
 import { ReviewReply } from 'src/seller/entities/product/review/reviewReply.entity';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './local/local.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './jwt/constant';
+import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
-  providers: [SellerAuthService, SellerService, LocalStrategy],
-  imports: [PassportModule,TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review, ReviewReply])],
+  providers: [SellerAuthService, LocalStrategy, JwtStrategy], //🔴🔴 , SellerService
+  imports: [PassportModule, JwtModule.register(
+    {
+      secret : "SECRET",
+      signOptions: { expiresIn: '60s' },
+    }
+  ) ,TypeOrmModule.forFeature([Seller, Order, Product, AvailableQuality, Specification, Review, ReviewReply])],
 })
 export class SellerAuthModule {}

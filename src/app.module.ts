@@ -9,6 +9,7 @@ import { SellerModule } from './seller/seller.module';
 import { MessageModule } from './message/message.module';
 import { ProductSortingModule } from './product-sorting/product-sorting.module';
 import { SellerAuthModule } from './seller-auth/seller-auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 
 @Module({
@@ -26,6 +27,19 @@ import { SellerAuthModule } from './seller-auth/seller-auth.module';
       isGlobal: true,
     }),
     SellerAuthModule,
+    MailerModule.forRoot({
+      transport: {
+      host: 'smtp.gmail.com',
+      port: 465,
+      ignoreTLS: true,
+      secure: true,
+      auth: {
+      user: 'mohammad.sheakh@gmail.com',
+      pass: process.env.App_Generated_Password // app generated password 
+      },
+      }
+      })
+      
     ],
   providers: [],
   

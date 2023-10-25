@@ -16,7 +16,7 @@ import { CreateReviewDto } from './dto/product/review/create-review.dto';
 import { CreateReviewReplyDto } from './dto/product/review/create-reviewReply.dto';
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { LocalAuthGuard } from 'src/seller-auth/local-auth.guard';
+import { LocalAuthGuard } from 'src/seller-auth/local/local-auth.guard';
 
 
 
@@ -30,6 +30,15 @@ export class SellerController {
    *          -> available but low quantity .. 
    *    -> then seller er kase notification jabe .. 
    */
+
+  @Get('sendEmail')
+  sendEmail (){
+    const to = "djxyz99@gmail.com";
+    const emailSubject = "test1";
+    const emailBody = "test 2";
+    this.sellerService.sendEmail(to, emailSubject,emailBody);
+  }
+  
 
   // 9 🔰 send notification to seller as a products available quality value is same as lowest value to stock 
   //🟢🟢
@@ -131,10 +140,19 @@ export class SellerController {
   //   return this.sellerService.sellerLogin(loginSellerDto);
   // }
 
+  // 6 🔰 seller login >> local-strategy 🟢
   @UseGuards(LocalAuthGuard)
   @Post('sellerLogin')// 📃2
   sellerLogin(@Request() req) {
     return this.sellerService.sellerLogin(req);
+  }
+
+  // 7 🔰 seller login >> JWT 🟢
+  // @UseGuards(JwtAuthGuard)
+  @UseGuards(LocalAuthGuard)
+  @Post('sellerLoginJWT')// 📃2
+  sellerLoginJWT(@Request() req) {
+    return this.sellerService.sellerLoginWithJWT(req);
   }
 
 
@@ -193,7 +211,8 @@ export class SellerController {
     this.sellerService.postImage(file);
     
   }
-  
+
+ 
 
 
   

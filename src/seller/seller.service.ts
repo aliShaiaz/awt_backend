@@ -13,6 +13,8 @@ import { AvailableQuality } from './entities/product/availableQuality.entity';
 import { Specification } from './entities/product/specificaiton.entity';
 import { Review } from './entities/product/review/review.entity';
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
+import { SellerAuthService } from 'src/seller-auth/seller-auth.service';
+import { MailerService } from '@nestjs-modules/mailer';
 
 // Status📃(total: problem : )
 @Injectable()
@@ -25,8 +27,11 @@ export class SellerService {
     @InjectRepository(AvailableQuality) private availableQualitysRepository: Repository<AvailableQuality>,
     @InjectRepository(Specification) private availableSpecificaitonsRepository: Repository<Specification> ,
     @InjectRepository(Review) private reviewsRepository: Repository<Review> ,
-    @InjectRepository(ReviewReply) private reviewRepliesRepository: Repository<ReviewReply>  
-  ){}
+    @InjectRepository(ReviewReply) private reviewRepliesRepository: Repository<ReviewReply> ,
+      private sellerAuthService: SellerAuthService,
+      private mailerService: MailerService
+
+    ){}
 
   /*
       //🟢 category should be another table / entity .. product and category should have .... relationship 
@@ -201,6 +206,10 @@ export class SellerService {
     return req.user;
   }
 
+  sellerLoginWithJWT(req){
+    return this.sellerAuthService.loginWithJWT(req.user);
+  }
+
   //8 🟢🔴 // id cant assign manually .. id set automatically
   async createNewProduct(createProductDto) : Promise<Product>{
     let newProduct;
@@ -359,5 +368,20 @@ export class SellerService {
   // 
   postImage(file){
     console.log(file);
+  }
+
+  // send email 
+  async sendEmail(to, emailSubject, emailBody){
+    try{
+      await this.mailerService.sendMail({
+        to: to,
+        subject: emailSubject,
+        text: emailBody
+        });
+    }
+    catch(err){
+      console.log(err);
+    }
+    
   }
 }

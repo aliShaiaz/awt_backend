@@ -1,12 +1,21 @@
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables from .env file🟢🟢🟢🟢🟢🔰🔰
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+
+const DB_PASSWORD = process.env.DB_PASSWORD;
+
 const config:any | PostgresConnectionOptions = {
   type: 'postgres', 
   host:'localhost', // database host name 
   post: 5432, 
   username: 'postgres', // new
-  password : '509812**', //🔰 give password
-  //password:process.env.DB_PASSWORD,
+  
+  password:DB_PASSWORD,
   database : 'awt_backend', // database name  
   //entities : [Feedback, User], // dist er pore src thakbe na 
   autoLoadEntities : true, // // not for production version 

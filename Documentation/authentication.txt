@@ -9,3 +9,12 @@
 
 5. npm i express-session 
 6. npm i --save @nestjs/jwt passport-jwt
+
+
+// 20 api -30
+// file upload 
+// one to one , one to many 
+// authentication and session
+// Exception handling 
+// Git Repo 
+// Mailer (bonus) .. 
