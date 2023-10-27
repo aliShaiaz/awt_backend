@@ -16,6 +16,7 @@ import { ReviewReply } from './entities/product/review/reviewReply.entity';
 import { SellerAuthService } from 'src/seller-auth/seller-auth.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
+import { session } from 'passport';
 
 // Status📃(total: problem : )
 @Injectable()
@@ -260,6 +261,7 @@ export class SellerService {
   sellerLoginWithJWT(req){
     return this.sellerAuthService.loginWithJWT(req.user);
   }
+
 
   //8 🟢🔴 // id cant assign manually .. id set automatically
   async createNewProduct(createProductDto) : Promise<Product>{

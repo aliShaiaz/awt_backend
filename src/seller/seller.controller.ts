@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request, UploadedFiles, HttpException, HttpStatus, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request, UploadedFiles, HttpException, HttpStatus, Query, Res, Session, Req } from '@nestjs/common';
 
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
@@ -58,6 +58,19 @@ export class SellerController {
       
     }
     
+    
+  }
+
+  @Get('logout')
+  async sellerLogOut(/*@Session() session,*/ @Req() req, @Res() res){
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+      }
+      res.clearCookie('connect.sid');
+      res.status(200).send('Logged out successfully');
+      return "logged out !";
+    });
     
   }
 
@@ -170,10 +183,14 @@ export class SellerController {
   // 6 🔰 seller login >> local-strategy 🟢
   @UseGuards(LocalAuthGuard)
   @Post('sellerLogin')// 📃2
-  sellerLogin(@Request() req) {
+  sellerLogin(@Request() req, @Session() session) {
     
     try{
-      return this.sellerService.sellerLogin(req);
+      const user =  this.sellerService.sellerLogin(req);
+      
+      session.email = user.sellerEmailAddress;
+      console.log(session.email)
+      return  this.sellerService.sellerLogin(req);
     }catch(err){
       
       throw new HttpException(
@@ -199,6 +216,7 @@ export class SellerController {
     return this.sellerService.sellerLoginWithJWT(req);
   }
 
+  
 
   // 8 🔰 Create a new Product 🟢🔴
    
