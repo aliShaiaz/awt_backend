@@ -18,6 +18,7 @@ import { ReviewReply } from './entities/product/review/reviewReply.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from 'src/seller-auth/local/local-auth.guard';
 import { join } from 'path';
+import { SessionGuard } from 'src/seller-auth/session/session.guard';
 
 
 
@@ -155,6 +156,7 @@ export class SellerController {
 
   
   //3 🔰 get one seller by id 🟢🟢
+  @UseGuards(SessionGuard)// 🔰🔰🔰🔰🔰🔰
   @Get(':id')// 📃5
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Seller> {
     return this.sellerService.findOne(id);
