@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, UseGuards, Request, UploadedFiles, HttpException, HttpStatus, Query, Res } from '@nestjs/common';
 
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
@@ -17,6 +17,7 @@ import { CreateReviewReplyDto } from './dto/product/review/create-reviewReply.dt
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from 'src/seller-auth/local/local-auth.guard';
+import { join } from 'path';
 
 
 
@@ -36,7 +37,38 @@ export class SellerController {
     const to = "djxyz99@gmail.com";
     const emailSubject = "test1";
     const emailBody = "test 2";
-    this.sellerService.sendEmail(to, emailSubject,emailBody);
+    try{
+      this.sellerService.sendEmail(to, emailSubject,emailBody);
+    }catch(err){
+      
+      // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+      {
+        //1st argument which is response argument -> string / object .. we pass object here 
+        status : HttpStatus.FORBIDDEN, // statusCode
+        error : "Custom Error Message : Email Can Not Send Email format is not correct ", // short description
+      }, 
+      HttpStatus.FORBIDDEN // 2nd argument which is status 
+      ,
+      {
+        // 3rd argument is optional // can be used to provide an error cause. 
+        cause : err
+      }
+      );
+      
+    }
+    
+    
+  }
+
+  @Get("getShopLogo")
+  async getShopLogo(
+    @Query('sellerId', ParseIntPipe) sellerId:string,
+    @Res() res
+  ){
+    const shopLogo = await this.sellerService.getShopLogo(sellerId);
+    const imagePath = join(__dirname, '..', '..','..', 'uploads', shopLogo); // Adjust the path as needed
+    res.sendFile(imagePath);
   }
   
 
@@ -87,9 +119,6 @@ export class SellerController {
    async addReplyToAReview(@Body() createReviewReplyDto : CreateReviewReplyDto) : Promise<ReviewReply>{
     return await this.sellerService.addReplyToAReview(createReviewReplyDto);
    }
-
-
-  
   
   //1 🔰create new seller 🟢🔴
 
@@ -142,7 +171,24 @@ export class SellerController {
   @UseGuards(LocalAuthGuard)
   @Post('sellerLogin')// 📃2
   sellerLogin(@Request() req) {
-    return this.sellerService.sellerLogin(req);
+    
+    try{
+      return this.sellerService.sellerLogin(req);
+    }catch(err){
+      
+      throw new HttpException(
+      {
+        status : HttpStatus.UNAUTHORIZED, // statusCode - 401
+        error : "Custom Error Message : Credential is wrong", // short description
+      }, 
+      HttpStatus.UNAUTHORIZED // 2nd argument which is status 
+      ,
+      {
+        //optional //provide an error cause. 
+        cause : err
+      }
+      );
+    }
   }
 
   // 7 🔰 seller login >> JWT 🟢
@@ -185,33 +231,6 @@ export class SellerController {
 
    //////////////////////////////  🔰 send notification to seller as a products stock value is so high that .. it should need some promotion
    //////////////////////////////  🔰 give promotion about a product whose stock value is so low, and there is product shortage of that product
-  
-
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file', 
-  { fileFilter: (req, file, cb) => {
-  if (file.originalname.match(/^.*\.(jpg)$/))
-  cb(null, true);
-  else {
-  cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-  }
-  },
-  limits: { fileSize: 100000 },
-  storage:diskStorage({
-  destination: './uploads',
-  filename: function (req, file, cb) {
-  cb(null,Date.now()+file.originalname)
-  },
-  })
-  }))
-  postImage(@UploadedFile() file: Express.Multer.File): void
-  {
-    console.log("================ in controller======")
-    //this.sellerService.postImage(file);
-  }
-
-  
-  
   
   @Post('uploadAgain')
   // 🟢 for single file upload 
@@ -259,9 +278,13 @@ cb(null,Date.now()+file.originalname)
       shopLogo?: Express.Multer.File[] 
     }, @Body() createSellerDto: CreateSellerDto): void
   {
-   this.sellerService.uploadAgain(files.sellerImage,files.shopLogo, createSellerDto);
+    
+    //this.sellerService.uploadAgain(files.sellerImage,files.shopLogo, createSellerDto);
+    this.sellerService.uploadAgain(files.sellerImage,files.shopLogo, createSellerDto);
     
   }
+  
+
   
 
 }

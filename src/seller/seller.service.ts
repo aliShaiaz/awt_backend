@@ -48,44 +48,75 @@ export class SellerService {
 
   // 1 done // 🟢🔴
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
-    console.log("WE ARE IN SERVICE ----------", createSellerDto)
     let newSeller;
     if(createSellerDto.id){
-      console.log("WE ARE IN IF ----------")
       newSeller = {...createSellerDto}
     }else{
-      console.log("WE ARE IN ELSE ----------")
       newSeller = {id: Date.now(), ...createSellerDto}
-      //newSeller = {...createSellerDto}
     }
-    //this.sellersRepository.create(newSeller);
-    await this.sellersRepository.save(newSeller);
-    return newSeller;
-  }
-
-
-  // 🔴🔴🔴 need to test
-  async createWithImage(createSellerDto: CreateSellerDto, files/*: Express.Multer.File[]*/) : Promise<Seller> {
-    console.log("in service ====================");
-    console.log("createSellerDto : ", createSellerDto);
-    console.log("files : ", files);
-    const sellerImages = files.map(file => file.filename); // but may be file name modify kora lagbe .. 
-    let newSeller;
-    if(createSellerDto.id){
-      newSeller = {...createSellerDto, sellerImage: sellerImages[0], shopLogo: sellerImages[1]}
-    }else{
-      newSeller = {id: Date.now(), ...createSellerDto, sellerImage: sellerImages[0], shopLogo: sellerImages[1]}
-    }
-    //🛡️🛡️🛡️this.sellers.push(newSeller)
+    
     await this.sellersRepository.save(newSeller);
     return newSeller;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
-  uploadAgain(sellerImage,shopLogo, createProductDto){
-    console.log(" In service ====================, file", sellerImage, shopLogo);
-    console.log(" In service ==================== createProductDto", createProductDto);
-    // console.log(file);
+  uploadAgain(sellerImage,shopLogo, createSellerDto){
+    //console.log(" In service ==, file", sellerImage); // shopLogo
+
+    const sellerImageFileName = sellerImage.map(sellerImage => sellerImage.filename)
+    const shopLogoFileName = shopLogo.map(shopLogo => shopLogo.filename)
+    
+    // const arrayOfString  = JSON.stringify(sellerImageFileName)
+    // const imgFileName = arrayOfString;
+    
+    // console.log("imgFileName : ", imgFileName)
+    // console.log("sellerImageFileName : ",sellerImageFileName.toString())
+
+    const sellerImageFileNameString = sellerImageFileName.toString();
+    const shopLogoFileNameString = shopLogoFileName.toString();
+
+    //console.log(" In service ==================== createProductDto", createSellerDto);
+    let newSeller;
+    if(createSellerDto.id){
+      newSeller = {
+        ...createSellerDto,
+         sellerImage: sellerImageFileNameString,
+         shopLogo: shopLogoFileNameString,
+        //sellerImage: JSON.stringify(sellerImageFileName),
+        //shopLogo: JSON.stringify(shopLogoFileName),
+      };
+    }else{
+      newSeller = {
+        id: Date.now(), 
+        ...createSellerDto, 
+        //sellerImage: sellerImage, 
+        //shopLogo: shopLogo
+         sellerImage: sellerImageFileNameString, 
+         shopLogo: shopLogoFileNameString,
+        //sellerImage: JSON.stringify(sellerImageFileName), 
+        //shopLogo: JSON.stringify(shopLogoFileName)
+      }
+    }
+    //
+    this.sellersRepository.save(newSeller);
+  }
+//////////////////////////////////////////////////////////
+  async getShopLogo(sellerId){
+    //
+    console.log("in service => sellerId", sellerId)
+    const user =  await this.sellersRepository.findOne({ //🟢 findOneOrFail use korte hobe ..
+      where: {id : sellerId} // 🤔😥 // it means {id : id}
+    });
+    
+    // extract shoplogo 
+    let sellerImage;
+    let sellerShopLogo;
+    if(user){
+       sellerShopLogo = await user.shopLogo;
+       sellerImage = await user.sellerImage;
+    }
+    console.log(sellerShopLogo,"----",sellerImage)
+    return sellerShopLogo;
   }
   
 
@@ -214,6 +245,7 @@ export class SellerService {
     //   // id destructure kore id return korte pari .. 
     //   return 2;
     // }
+    
     return req.user;
   }
 
@@ -378,9 +410,9 @@ export class SellerService {
   }
 
   // 
-  postImage(file){
-    console.log(file);
-  }
+  // postImage(file){
+  //   console.log(file);
+  // }
 
   
   

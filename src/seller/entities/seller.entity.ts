@@ -6,7 +6,7 @@ export class Seller {
   
   // 🤔 now if i want to give a custom id .. then how can i do that ?
   // @PrimaryGeneratedColumn('uuid') // what is this ? 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   id : number;
   @Column('text', {default : ""})
   sellerName : string;
