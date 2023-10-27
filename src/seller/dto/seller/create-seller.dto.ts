@@ -10,6 +10,7 @@ export class CreateSellerDto {
   sellerImage ?: string;
   @IsEmail() // working
   sellerEmail ?: string;
+  sellerPassword:string;
   @Contains('shop') // working
   @NotContains('Abc') // working
   @NotContains('abc') 

@@ -15,6 +15,7 @@ import { Review } from './entities/product/review/review.entity';
 import { ReviewReply } from './entities/product/review/reviewReply.entity';
 import { SellerAuthService } from 'src/seller-auth/seller-auth.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import * as bcrypt from 'bcrypt';
 
 // Status📃(total: problem : )
 @Injectable()
@@ -49,10 +50,20 @@ export class SellerService {
   // 1 done // 🟢🔴
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
     let newSeller;
+    let sellerPassword = createSellerDto.sellerPassword;
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(sellerPassword, salt);
+    console.log("hassed password : ",hassedpassed);
     if(createSellerDto.id){
-      newSeller = {...createSellerDto}
+      newSeller = {
+        ...createSellerDto,
+        sellerPassword: hassedpassed
+      }
     }else{
-      newSeller = {id: Date.now(), ...createSellerDto}
+      newSeller = {
+        id: Date.now(), 
+        ...createSellerDto,
+        sellerPassword: hassedpassed}
     }
     
     await this.sellersRepository.save(newSeller);
@@ -60,41 +71,38 @@ export class SellerService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
-  uploadAgain(sellerImage,shopLogo, createSellerDto){
+  async uploadAgain(sellerImage,shopLogo, createSellerDto){
     //console.log(" In service ==, file", sellerImage); // shopLogo
 
     const sellerImageFileName = sellerImage.map(sellerImage => sellerImage.filename)
     const shopLogoFileName = shopLogo.map(shopLogo => shopLogo.filename)
     
-    // const arrayOfString  = JSON.stringify(sellerImageFileName)
-    // const imgFileName = arrayOfString;
-    
-    // console.log("imgFileName : ", imgFileName)
-    // console.log("sellerImageFileName : ",sellerImageFileName.toString())
 
     const sellerImageFileNameString = sellerImageFileName.toString();
     const shopLogoFileNameString = shopLogoFileName.toString();
 
-    //console.log(" In service ==================== createProductDto", createSellerDto);
+
+    let sellerPassword = createSellerDto.sellerPassword;
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(sellerPassword, salt);
+    console.log("hassed password : ",hassedpassed);
+
     let newSeller;
     if(createSellerDto.id){
       newSeller = {
         ...createSellerDto,
          sellerImage: sellerImageFileNameString,
          shopLogo: shopLogoFileNameString,
-        //sellerImage: JSON.stringify(sellerImageFileName),
-        //shopLogo: JSON.stringify(shopLogoFileName),
+         sellerPassword: hassedpassed
+        
       };
     }else{
       newSeller = {
         id: Date.now(), 
-        ...createSellerDto, 
-        //sellerImage: sellerImage, 
-        //shopLogo: shopLogo
+        ...createSellerDto,
          sellerImage: sellerImageFileNameString, 
          shopLogo: shopLogoFileNameString,
-        //sellerImage: JSON.stringify(sellerImageFileName), 
-        //shopLogo: JSON.stringify(shopLogoFileName)
+         sellerPassword: hassedpassed
       }
     }
     //

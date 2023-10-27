@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Repository } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class SellerAuthService {
   
@@ -24,9 +24,11 @@ export class SellerAuthService {
       where : {sellerEmailAddress: sellerEmailAddress}
     });
 
-    console.log("auth service -> validateSeller(sellerEmailAddress, sellerPassword) => ", sellerEmailAddress, "==",sellerPassword );
-
-    if (user && user.sellerPassword === sellerPassword) {
+    
+      const isMatch = await bcrypt.compare(sellerPassword, user.sellerPassword); //  dbpassword = user.sellerPassword
+      // console.log(isMatch, "-- seller given Password --", sellerPassword, "--  user.sellerPassword  --", user.sellerPassword);
+      // if (user && user.sellerPassword === sellerPassword) {
+      if (user && isMatch) {
       const { sellerPassword, ...result } = user;
       return result; // why ? 
     }
