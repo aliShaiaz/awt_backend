@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryColumn, Unique } from "typeorm";
+import { Entity, Column, PrimaryColumn, Unique, OneToMany } from "typeorm";
+import { ManagerEntity } from "./manager.entity";
 
 @Entity('admin')
 export class AdminEntity{
     @PrimaryColumn({unique: true})
-    id:string;
+    adminId:string;
     @Column()
     name:string;
     @Column()
@@ -12,5 +13,9 @@ export class AdminEntity{
     password: string;
     @Column({ nullable: true })
     pic:string|null;
+    
+
+    @OneToMany(() => ManagerEntity, manager => manager.admin, { cascade: true, onDelete: 'CASCADE' })
+    managers: ManagerEntity[];
 
 }

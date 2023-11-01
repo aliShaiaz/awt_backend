@@ -3,7 +3,7 @@ import { IsString, IsEmail, IsNotEmpty, MinLength } from "class-validator";
 
 export class AdminInfo{
     @IsNotEmpty()
-    id: string;
+    adminId: string;
     @IsNotEmpty()
     name: string;
     @IsNotEmpty()
@@ -12,8 +12,5 @@ export class AdminInfo{
     @MinLength(4)
     password: string;
     pic: string;
-
-
-
 
 }
