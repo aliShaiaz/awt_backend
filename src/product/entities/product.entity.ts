@@ -5,20 +5,35 @@ import { Brand } from 'src/brand/entities/brand.entity';
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
-  ProductID: number;
+  id: number;
 
   @Column()
-  Name: string;
+  product_name: string;
 
   @Column()
-  Description: string;
+  product_description: string;
 
   @Column()
-  Price: number;
+  product_price: number;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  Category: Category;
+  @Column()
+  product_image: string;
 
-  @ManyToOne(() => Brand, (brand) => brand.products)
-  Brand: Brand;
+  @ManyToOne(() => Category, (category) => category.products, {cascade : true})
+  category: Category;
+
+  @ManyToOne(() => Brand, (brand) => brand.products, {cascade : true})
+  brand: Brand;
+
+  @Column('float') // Specify the data type as 'float' for product_rating
+  product_rating: number;
+
+  @Column()
+  quantity: number;
+
+  @Column('json', { nullable: true }) // For reviews, use 'json' data type (nullable if needed)
+  reviews: any;
+
+  @Column('json', { nullable: true }) // For orderItems, use 'json' data type (nullable if needed)
+  orderItems: any;
 }

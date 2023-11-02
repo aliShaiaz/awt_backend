@@ -4,11 +4,11 @@ import { Product } from 'src/product/entities/product.entity';
 @Entity()
 export class Brand {
   @PrimaryGeneratedColumn()
-  BrandID: number;
+  brandId: number;
 
   @Column()
-  Name: string;
+  name: string;
 
-  @OneToMany(() => Product, (product) => product.Brand)
+  @OneToMany(() => Product, (product) => product.brand)
   products: Product[];
 }

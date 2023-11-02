@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 
 
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +11,13 @@ import { CategoryModule } from './category/category.module';
 import { BrandModule } from './brand/brand.module';
 import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart-item/cart-item.module';
+import { OrderModule } from './order/order.module';
+import { OrderItemModule } from './order-item/order-item.module';
+import { ReviewModule } from './review/review.module';
+import { OrderStatusModule } from './order-status/order-status.module';
+import { OrderTrackingModule } from './order-tracking/order-tracking.module';
+import { NotificationModule } from './notification/notification.module';
+import { CurrentBuyerMiddleware } from './utility/middlewares/current-buyer.middleware';
 
 
 @Module({
@@ -33,35 +40,25 @@ import { CartItemModule } from './cart-item/cart-item.module';
     BrandModule,
     CartModule,
     CartItemModule,
+    OrderModule,
+    OrderItemModule,
+    ReviewModule,
+    OrderStatusModule,
+    OrderTrackingModule,
+    NotificationModule,
+    
     ],
   providers: [],
   
 })
-export class AppModule {}
-
-/*
-it should be like this ...............
-@Module({
-    imports: [
-    TypeOrmModule.forRoot(config),
-    SellerModule, 
-        BuyerModule,
-        RouterModule.register([
-      {
-        path:'api/seller', 
-        module : SellerModule
-      },
-      {
-        path:'api/buyer',
-        module : BuyerModule
-      }
-    ]),
-    ConfigModule.forRoot({ //for env variable
-      isGlobal:true
-    }),
-    
-  ],
-  providers: [],
-  
-})
-*/
+export class AppModule {
+  configure ( consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CurrentBuyerMiddleware)
+      .exclude(
+        { path: 'buyer/login', method: RequestMethod.ALL },
+        { path: 'buyer/signup', method: RequestMethod.ALL }
+      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL})
+  }
+}

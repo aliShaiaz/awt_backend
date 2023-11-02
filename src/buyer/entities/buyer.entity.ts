@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm';
+import { Order } from 'src/order/entities/order.entity';
 
 @Entity()
 export class Buyer {
@@ -6,28 +7,36 @@ export class Buyer {
   id: number;
 
   @Column()
-  BuyerFirstName: string;
+  buyerFirstName: string;
 
   @Column()
-  BuyerLastName: string;
+  buyerLastName: string;
 
   @Column()
-  BuyerPassword: string;
+  buyerPassword: string;
+
+  @Column({unique:true})
+  buyerEmail: string;
 
   @Column()
-  BuyerEmail: string;
-
-  
+  buyerDateOfBirth: Date;
 
   @Column()
-  BuyerDateOfBirth: Date;
+  buyerPhoneNo: string;
 
   @Column()
-  BuyerPhoneNo: string;
+  buyerGender: string;
 
   @Column()
-  BuyerGender: string;
+  buyerAddresses: string;
 
-  @Column()
-  BuyerAddresses: string;
+  @Column({ nullable: true })
+  buyerimage: string;
+
+
+  @OneToMany(() => Order, (order) => order.buyer)
+  @JoinColumn()
+  orders: Order[];
+  reviews: any;
+  notifications: any;
 }

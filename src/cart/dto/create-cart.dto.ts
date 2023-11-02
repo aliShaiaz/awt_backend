@@ -1,7 +1,7 @@
 import { IsNumber, IsObject } from 'class-validator';
 import { Buyer } from 'src/buyer/entities/buyer.entity'; // Import the Buyer entity here
 
-export class CartDto {
+export class CreateCartDto {
   @IsNumber()
   buyer_id: number;
 

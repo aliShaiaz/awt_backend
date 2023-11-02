@@ -1,10 +1,12 @@
 import { Transform, Type } from "class-transformer";
 import { IsDate, IsEmail, IsNotEmpty, IsNumber, IsString, MinLength, Matches, matches, IsOptional } from "class-validator";
+import { BuyerLoginDto } from "./login-buyer.dto";
 
-export class CreateBuyerDto {
+export class CreateBuyerDto extends BuyerLoginDto {
     @IsOptional()
     id: number;
 
+    BuyerImage: string;
 
     @IsString()
     @IsNotEmpty()
@@ -14,9 +16,9 @@ export class CreateBuyerDto {
     @IsNotEmpty()
     BuyerLastName: string;
 
-    @IsNotEmpty()
-    @IsEmail()
-    BuyerEmail : string;
+    // @IsNotEmpty()
+    // @IsEmail()
+    // BuyerEmail : string;
 
     @IsNotEmpty()
     @IsString()
@@ -24,12 +26,12 @@ export class CreateBuyerDto {
         {message : 'Phone number must be start by 01 and it contain 11 degit'})
     BuyerPhoneNo : string;
 
-    @IsNotEmpty()
-    @MinLength(8, { message: 'Password must be at least 8 characters long.' })
-    @Matches(/^(?=(.*[A-Za-z]){2})(?=.*\d)(?=(.*[^A-Za-z0-9\s]){2})[A-Za-z0-9!@#$%^&*()_+{}[\]:;<>,.?~\\-]+$/, {
-        message : 'The password contains at least 2 Alphabets, 1 number, and 2 special characters.',
-    })
-    BuyerPassword : string;
+    // @IsNotEmpty()
+    // @MinLength(8, { message: 'Password must be at least 8 characters long.' })
+    // @Matches(/^(?=(.*[A-Za-z]){2})(?=.*\d)(?=(.*[^A-Za-z0-9\s]){2})[A-Za-z0-9!@#$%^&*()_+{}[\]:;<>,.?~\\-]+$/, {
+    //     message : 'The password contains at least 2 Alphabets, 1 number, and 2 special characters.',
+    // })
+    // BuyerPassword : string;
 
     @IsNotEmpty()
     @IsDate()
@@ -44,7 +46,7 @@ export class CreateBuyerDto {
 
     @IsNotEmpty()
     @IsString()
-    BuyerAddress : string;
+    BuyerAddresses : string;
 
     @IsNotEmpty()
     @IsString()
