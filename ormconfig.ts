@@ -5,7 +5,7 @@ const config:any | PostgresConnectionOptions = {
   host:'localhost', // database host name 
   post: 5432, 
   username: 'postgres', // new
-  password : '', //🔰 give password
+  password : '12345', //🔰 give password
   //password:process.env.DB_PASSWORD,
   database : 'awt_backend', // database name  
   //entities : [Feedback, User], // dist er pore src thakbe na 

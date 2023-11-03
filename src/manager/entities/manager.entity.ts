@@ -1,0 +1,26 @@
+import { Category } from "src/categories/entities/category.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+
+@Entity()
+export class Manager {
+    
+    @PrimaryGeneratedColumn()
+    id : number;
+
+    @Column()
+    name : string;
+
+    @Column({unique: true})
+    email : string;
+
+    @Column({select:false})
+    password : string;
+
+    @CreateDateColumn()
+    createdAt:Timestamp;
+    @UpdateDateColumn()
+    updateAt:Timestamp;
+
+    @OneToMany(()=>Category,(cat)=>cat.addedBy)
+    categories:Category[];
+}

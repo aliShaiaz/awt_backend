@@ -5,13 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import config from '../ormconfig';
 import { RouterModule } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ManagerModule } from './manager/manager.module';
+import { CategoriesModule } from './categories/categories.module';
 
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(config),
     // Modules should be register here
-    //.
+   
+    ManagerModule,CategoriesModule,
     //.
     //.
     RouterModule.register([
@@ -21,6 +24,8 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ManagerModule,
+    CategoriesModule,
     ],
   providers: [],
   
