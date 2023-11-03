@@ -4,20 +4,25 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { promises } from 'dns';
 import { extname, join } from 'path';
 import * as fs from 'fs';
-import { log } from 'console';
+import { Brand } from 'src/brand/entities/brand.entity';
+import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
 
-  constructor(@InjectRepository(Product) private readonly productRepository : Repository<Product>){
-
-  }
+  constructor(
+    @InjectRepository(Product) private readonly productRepository: Repository<Product>,
+    @InjectRepository(Brand) private readonly brandRepository: Repository<Brand>,
+    @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
+  ) {}
+  
 
   //✅✅Create Product✅✅
-  async createProduct(createProductDto: CreateProductDto, imageFile: Express.Multer.File): Promise<Product> {
+  async createProduct(createProductDto: CreateProductDto, imageFile): Promise<Product> {
+
+    const productImage = imageFile.filename;
     const product = new Product();
     product.product_name = createProductDto.Name;
     product.product_description = createProductDto.Description;
@@ -26,21 +31,7 @@ export class ProductService {
     product.quantity = createProductDto.AvailableQuantity;
     product.category = createProductDto.Category;
     product.brand = createProductDto.Brand;
-
-
-    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-    const fileExt = extname(imageFile.originalname).toLowerCase();
-
-    if (!allowedExtensions.includes(fileExt)) {
-      const allowedFormats = allowedExtensions.join(', ');
-      throw new HttpException(`Invalid image format. Supported formats: ${allowedFormats}`, HttpStatus.BAD_REQUEST);
-    }
-
-    // Save the image to the upload folder and set the product_image field
-    const imageFileName = Date.now() + fileExt;
-    const imagePath = join('uploads', imageFileName);
-    fs.writeFileSync(imagePath, imageFile.buffer);
-    product.product_image = imagePath;
+    product.product_image = productImage.toString();
 
     return await this.productRepository.save(product);
   }
@@ -50,8 +41,8 @@ export class ProductService {
 
   //✅✅Find all product ✅✅
 
-  findAll() : Promise<Product[]> {
-    return this.productRepository.find();
+  async findAll() : Promise<Product[]> {
+    return await this.productRepository.find();
   }
 
   //❌❌Find all product ❌❌
@@ -59,8 +50,8 @@ export class ProductService {
 
   //✅✅Find products by ID ✅✅
 
-  findOne(id: number) : Promise<Product> {
-    return this.productRepository.findOne({ where: { id } });
+  async findOne(id: number) : Promise<Product> {
+    return await this.productRepository.findOne({ where: { id } });
   }
 
   //❌❌ Find products by ID ❌❌
@@ -115,11 +106,64 @@ export class ProductService {
 
 
 
-  //✅✅Delete Product ✅✅
+  // ✅✅Serch product by Brand ✅✅
 
-  remove(id: number) {
-    return this.productRepository.delete(id);
+  async productByBrand(brand: string): Promise<Product[]> {
+    // Find the brand using its name
+    //const brandEntity = await this.brandRepository.findOne({ where: { BrandName: brand } });
+    const brandEntity = await this.brandRepository
+      .createQueryBuilder('brand')
+      .where('LOWER(brand.BrandName) ILIKE LOWER(:brand)', { brand: brand})
+      .getOne();
+    
+    if (brandEntity) {
+      // Find products by the brand
+      const products = await this.productRepository.find({ where: { brand: brandEntity } });
+      if (products.length === 0) {
+        throw new HttpException('No products found in the specified brand', HttpStatus.NOT_FOUND);
+      } else {
+        return products;
+      }
+      
+
+    } else {
+      // Handle the case where the brand is not found
+      throw new HttpException('Not found the specified brand', HttpStatus.BAD_REQUEST);
+    }
   }
 
-  //❌❌Delete Product ❌❌
+   // ❌❌Serch product by Brand ❌❌
+
+
+
+
+
+    // ✅✅Serch product by Category ✅✅
+
+
+
+  async productByCategory(category: string): Promise<Product[]> {
+    // Perform a case-insensitive search for the category
+    const categoryEntity = await this.categoryRepository
+      .createQueryBuilder('category')
+      .where('LOWER(category.CategoryName) ILIKE LOWER(:category)', { category: `%${category}%` })
+      .getOne();
+  
+    if (categoryEntity) {
+      // Find products by the category
+      const products = await this.productRepository.find({ where: { category: categoryEntity } });
+  
+      if (products.length === 0) {
+        throw new HttpException('No products found in the specified category', HttpStatus.NOT_FOUND);
+      } else {
+        return products;
+      }
+    } else {
+      // Handle the case where the category is not found
+      throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+  // ❌❌Serch product by Category ❌❌
 }

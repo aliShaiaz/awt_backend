@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Response, Request } from "express";
 
 
@@ -11,7 +11,7 @@ export class CurrentBuyerMiddleware implements NestMiddleware {
             next();
           } else {
             // User is not logged in, return an unauthorized response
-            res.status(401).json({ message: 'Unauthorized' });
+            throw new HttpException('Unauthorized Access', HttpStatus.UNAUTHORIZED);
           }
     }
 }

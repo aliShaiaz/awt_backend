@@ -193,8 +193,8 @@ export class BuyerService {
   //------------------------------------------------------------------------
 
 
-  async remove(id: number) {
-    return this.buyerRepository.delete(id);
+  async remove(buyerEmail: string) {
+    return this.buyerRepository.delete({ buyerEmail });
   }
 
 

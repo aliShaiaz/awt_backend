@@ -13,7 +13,8 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
-  UseGuards,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { BuyerService } from './buyer.service';
 import { CreateBuyerDto } from './dto/create-buyer.dto';
@@ -24,12 +25,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 import { hash } from 'bcrypt';
 import { AuthGuard } from 'src/utility/authentication/auth.guard';
+import session from 'express-session';
 
 @Controller('buyer')
 export class BuyerController {
   constructor(private readonly buyerService: BuyerService) { }
 
-//------------------------------------------------------------------------
+  //------------------------------------------------------------------------
 
 
   @Post('signup')
@@ -81,8 +83,14 @@ export class BuyerController {
     return buyer;
   }
 
+
+
+  //------------------------------------------------------------------------
+
+
+
   @Get('profile')
-  @UseGuards(AuthGuard) // Protect this route with the AuthGuard middleware
+  // @UseGuards(AuthGuard) // Protect this route with the AuthGuard middleware
   getProfile(@Session() session): string {
     return `Welcome, ${session.buyer}!`; // Access the session to get the logged-in buyer
   }
@@ -120,26 +128,64 @@ export class BuyerController {
   //------------------------------------------------------------------------
 
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.buyerService.remove(+id);
+  @Delete('delete')
+  async remove(@Session() session, @Req() req, @Res() res) {
+    if (req.session.buyer) {
+      // Destroy the user's session
+
+      req.session.destroy((err) => {
+        if (err) {
+          throw new HttpException('Error logging out', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Clear the session cookie
+        res.clearCookie('connect.sid', { path: '/' }); // Replace 'connect.sid' with the actual cookie name used for sessions
+
+        res.status(HttpStatus.OK).send('Account deleted successfully');
+
+        // Use the `buyerEmail` obtained from the route paramete
+      });
+    } else {
+      throw new HttpException('No active session found', HttpStatus.BAD_REQUEST);
+    }
+    const buyerEmail = session.buyer.toString();
+    return this.buyerService.remove(buyerEmail);
   }
 
   //------------------------------------------------------------------------
 
+
+  @Post('logout')
+  async logout(@Req() req, @Res() res) {
+    if (req.session.buyer) {
+      // Destroy the user's session
+      req.session.destroy((err) => {
+        if (err) {
+          throw new HttpException('Error logging out', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Clear the session cookie
+        res.clearCookie('connect.sid', { path: '/' }); // Replace 'connect.sid' with the actual cookie name used for sessions
+
+        res.status(HttpStatus.OK).send('Logged out successfully');
+      });
+    } else {
+      throw new HttpException('No active session found', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
 }
 
 
+//------------------------------------------------------------------------
+
 declare module 'express-session' {
   interface Session {
-    buyer: string; // Assuming 'buyer' is a string, adjust the type accordingly
-    // You can add other session properties as needed
+    buyer: string;
   }
 }
 
 //------------------------------------------------------------------------
 
-// function postImage(arg0: any, image: any, File: any) {
-//   throw new Error('Function not implemented.');
-// }
 

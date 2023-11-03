@@ -57,8 +57,9 @@ export class AppModule {
       .apply(CurrentBuyerMiddleware)
       .exclude(
         { path: 'buyer/login', method: RequestMethod.ALL },
-        { path: 'buyer/signup', method: RequestMethod.ALL }
+        { path: 'buyer/signup', method: RequestMethod.ALL },
+        { path: 'product', method: RequestMethod.ALL }
       )
-      .forRoutes({ path: '*', method: RequestMethod.ALL})
+      // .forRoutes({ path: '*', method: RequestMethod.ALL})
   }
 }
