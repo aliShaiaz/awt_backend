@@ -8,12 +8,13 @@ import { AdminEntity } from "./entitys/admin.entity";
 import { Response,Request } from 'express';
 import { JwtAuthGuard } from "./jwt.guard";
 import { ManagerInfo } from "./dtos/manager.dto";
+import { EmailService } from "./mailer/email.service";
   
 
 @Controller('admin')
 export class AdminController{
-    constructor(private readonly adminService: AdminService){}
-
+    constructor(private readonly adminService: AdminService,
+        private readonly emailService:EmailService,){}
 
     // 1--> createAccount
     
@@ -188,7 +189,29 @@ export class AdminController{
     async getManagerById(@Param('managerId') managerId: string) {
      const managers = await this.adminService.getManagerById(managerId);
         return { managers };
-     }
+   }
+
+
+    @Post('sendMail/:managerId')
+     async sendMail(
+     @Param('managerId') managerId: string,
+     @Body('subject') subject: string, // Extract subject from request body
+     @Body('text') text: string,       // Extract text from request body
+     ) {
+     const manager = await this.adminService.managerById(managerId);
+
+    if (manager && manager.gmail) {
+      const to = manager.gmail;
+      console.log(to);
+      
+
+      await this.emailService.sendMail(to, subject, text); // Use subject and text from request body
+
+      return { message: 'Email sent successfully' };
+    } else {
+      return { message: 'Manager or Admin not found' };
+    }
+  }
 
 
 

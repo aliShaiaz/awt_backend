@@ -198,6 +198,18 @@ export class AdminService {
 
       return "This manager does not exist";
     }
+
+
+    async managerById(managerId: string): Promise<ManagerEntity | null> {
+      const manager = await this.managerRepository.findOne({ where: { managerId }, relations: ['admin'] });
+    
+      if (manager) {
+        return manager;
+      }
+
+      return null;
+    }
+
     
     
 

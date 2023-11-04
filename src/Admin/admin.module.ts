@@ -6,7 +6,7 @@ import { AdminEntity } from './entitys/admin.entity';
 import { ManagerEntity } from './entitys/manager.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './jwt.guard';
-
+import { EmailService } from './mailer/email.service';
 
 @Module({
     imports: [
@@ -18,6 +18,6 @@ import { JwtAuthGuard } from './jwt.guard';
           }),
     ],
     controllers: [AdminController],
-    providers: [AdminService,JwtAuthGuard,]
+    providers: [AdminService,JwtAuthGuard,EmailService,]
 })
 export class AdminModule{}
