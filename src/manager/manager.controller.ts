@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Session, UseGuards, Patch, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Session, UseGuards, Patch, HttpException, HttpStatus, UsePipes, ValidationPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ManagerService } from './manager.service';
 import { CreateManagerDto } from './dto/create-manager.dto';
 import { UpdateManagerDto } from './dto/update-manager.dto';
@@ -6,6 +6,8 @@ import { ManagerSignUpDto } from './dto/manager-signup.dto';
 import { Manager } from './entities/manager.entity';
 import { ManagerSignInDto } from './dto/manager-signin.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage as multerDiskStorage } from 'multer';
 
 @Controller('manager')
 export class ManagerController {
@@ -14,11 +16,46 @@ export class ManagerController {
 ///////////////////////////////////////////////////////////////////////////
  
 @Post('signup')
-  async signup(@Body() managerSignUpDto: ManagerSignUpDto): Promise<{ manager: Manager }> {
-    return { manager: await this.managerService.signup(managerSignUpDto) };
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('managerimage', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/\.(jpg|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(
+            new HttpException('Invalid image format', HttpStatus.BAD_REQUEST),
+            false
+          );
+        }
+      },
+      limits: { fileSize: 3000000 },
+      storage: multerDiskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}-${file.originalname}`);
+        },
+      }),
+    })
+  )
+  async signup(
+    @Body() managerSignUpDto: ManagerSignUpDto,
+    @UploadedFile() imageFile: Express.Multer.File
+  ): Promise<Manager> {
+    try {
+      const manager = await this.managerService.signup(managerSignUpDto, imageFile);
+      return manager;
+    } catch (error) {
+      throw new HttpException('Error creating manager', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
+
+
+
   @Post('signin')
+  @UsePipes(ValidationPipe)
   async signin(@Body() managerSignInDto: ManagerSignInDto, @Session() session) {
     const manager = await this.managerService.signin(managerSignInDto);
     if (manager) {
@@ -56,9 +93,13 @@ export class ManagerController {
     return await this.managerService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateManagerDto: UpdateManagerDto) {
-    return this.managerService.update(+id, updateManagerDto);
+  @Patch('update')
+  @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard('session'))
+  update( @Body() updateManagerDto: UpdateManagerDto, @Session() session) {
+    if(session.manager == null) throw new HttpException('Unauthorized Access', HttpStatus.BAD_REQUEST);
+    
+    return this.managerService.updateManager(updateManagerDto, session.manager);
   }
 
   @Delete(':id')
@@ -75,3 +116,11 @@ declare module 'express-session' {
     manager: string; 
   }
 }
+
+function diskStorage(arg0: { destination: string; filename: (req: any, file: any, cb: any) => void; }): any {
+  throw new Error('Function not implemented.');
+}
+function hash(BuyerPassword: any, saltRounds: number) {
+  throw new Error('Function not implemented.');
+}
+

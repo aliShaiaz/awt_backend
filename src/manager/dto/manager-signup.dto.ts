@@ -7,4 +7,6 @@ export class ManagerSignUpDto extends ManagerSignInDto{
      @Matches(/^[a-zA-Z. -]+$/, { message: 'Name must be only alphanumeric characters, spaces, dots, or hyphens' })
     name:string;
 
+    image: string;
+
 }

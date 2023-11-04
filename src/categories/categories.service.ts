@@ -35,6 +35,20 @@ export class CategoriesService {
     return this.categoryRepository.findOne({where: {id: id}});
   }
 
+  async updateCategory(id: number, fields: Partial<UpdateCategoryDto>) {
+    // Find the category by its ID
+    const category = await this.categoryRepository.findOne({ where: { id: id } });
+  
+    if (!category) {
+      throw new Error('Category not found');
+    }
+  
+    // Update the category with the provided fields
+    Object.assign(category, fields);
+  
+    // Save the updated category
+    return await this.categoryRepository.save(category);
+  }
 
   remove(id: number) {
     return this.categoryRepository.delete(id);

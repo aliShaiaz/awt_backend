@@ -18,18 +18,23 @@ export class ManagerService {
   ) {}
 
 ///////////////////////////////////////////
-async signup(managerSignUpDto: ManagerSignUpDto):Promise<Manager>{
+async signup(managerSignUpDto: ManagerSignUpDto, image):Promise<Manager>{
+
+  const managerImage = image.filename;
 
   const managerInfo = await this.managersRepository.findOne({where:{email: managerSignUpDto.email}});
 
   if(managerInfo) throw new BadRequestException('Email is not available');  //Exception handling
   managerSignUpDto.password= await hash(managerSignUpDto.password,10)
+  managerSignUpDto.image = managerImage.toString();
   let manager=this.managersRepository.create(managerSignUpDto);
   manager= await this.managersRepository.save(manager);
   delete manager.password
   return manager;
 }
 
+
+///////////////////////////////////////////
 
 async signin(managerSignInDto: ManagerSignInDto) {
   const managerExists = await this.managersRepository
@@ -54,7 +59,7 @@ async signin(managerSignInDto: ManagerSignInDto) {
 }
 
 
-//-----------------------------------------------------------------
+///////////////////////////////////////////
 
   create(createManagerDto: CreateManagerDto) {
     return 'This action adds a new manager';
@@ -70,18 +75,40 @@ async signin(managerSignInDto: ManagerSignInDto) {
     return manager; 
   }
 
-  update(id: number, updateManagerDto: UpdateManagerDto) {
-    return 'This action updates a #${id} manager';
+  ///////////////////////////////////////////
+
+  async updateManager(fields: Partial<UpdateManagerDto>, managerEmail) {
+    // Find the manager by their email
+  
+    const managerInfo = await this.managersRepository.findOne({ where: { email: managerEmail } });
+  
+    if (!managerInfo) {
+      throw new Error('Manager not found');
+    }
+  
+    // Update the manager with the provided fields
+    Object.assign(managerInfo, fields);
+  
+    // Save the updated manager
+    return await this.managersRepository.save(managerInfo);
   }
+
+
+  ///////////////////////////////////////////
 
   async remove(id: number) {
     return this.managersRepository.delete(id);
   }
 
 
+  ///////////////////////////////////////////
+
   async findManagerByEmail(email: string): Promise<Manager | null> {
     return this.managersRepository.findOne({ where: { email: email } });
   }
+
+
+
 
 }
 

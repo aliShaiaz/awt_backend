@@ -16,6 +16,9 @@ export class Manager {
     @Column({select:false})
     password : string;
 
+    @Column()
+    image: string;
+
     @CreateDateColumn()
     createdAt:Timestamp;
     @UpdateDateColumn()
