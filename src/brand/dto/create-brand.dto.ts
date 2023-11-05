@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
-export class CreateCategoryDto {
+export class CreateBrandDto {
+
     @IsNotEmpty({message:'title can not be null'})
     @IsString({message:'title should be string'})
     title:string;
