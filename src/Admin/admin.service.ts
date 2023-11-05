@@ -5,7 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt';
 import { ManagerEntity } from "./entitys/manager.entity";
-import { promises } from "dns";
+import { NotificationEntity } from "./entitys/notification.entity";
 
 
 @Injectable()
@@ -18,7 +18,7 @@ export class AdminService {
       private readonly jwtService: JwtService,
         @InjectRepository(AdminEntity) private readonly adminRepository: Repository<AdminEntity>,
         @InjectRepository(ManagerEntity) private readonly managerRepository: Repository<ManagerEntity>, 
-        
+        @InjectRepository(NotificationEntity) private readonly notificationRepository: Repository<NotificationEntity>,
     )
     {
         this.adminRepo = adminRepository;
@@ -35,9 +35,9 @@ export class AdminService {
       });
       console.log(state);
       if(state){
-        return false;
+        return true;
       }
-      return true;
+      return false;
 
     }
   
@@ -79,23 +79,26 @@ export class AdminService {
     }
     
 
+
     // 3--> Delete account
 
     async deleteAccount(adminId: string): Promise<void> {
-      const admin = await this.adminRepository.findOne({
-        where: { adminId },
-        relations: ['managers'], // Load the managers relation
-      });
-      
-      console.log(admin);
-      console.log(admin?.managers);
-      
-      if (admin) {
-        await this.managerRepository.remove(admin.managers);
-        await this.adminRepository.remove(admin);
+      const admin = await this.adminRepository.findOne({ where: { adminId }, relations: ['managers', 'notifications'] });
+    
+      if (!admin) {
+        throw new NotFoundException('Admin not found');
       }
-      
+    
+      //Here I remove associated managers first
+      await this.managerRepository.remove(admin.managers);
+    
+      //Then associated notifications
+      await this.notificationRepository.remove(admin.notifications);
+    
+      // Finally, remove the admin
+      await this.adminRepository.remove(admin);
     }
+    
   
 
     // 4--> Login
@@ -143,10 +146,6 @@ export class AdminService {
       manager.address = managerData.address;
       manager.password = managerData.password;
 
-      console.log(manager.managerId);
-      console.log(manager.name);
-      console.log(manager.gmail);
-      console.log(manager.password);
 
       // Set other properties as needed
   
@@ -161,14 +160,19 @@ export class AdminService {
 
     async deleteManager(managerId: string): Promise<string> {
       const manager = await this.managerRepository.findOne({where:{managerId}});
-    
+      const notificationManager = await this.notificationRepository.findOne({where:{managerId}});
       if (manager) {
         await this.managerRepository.remove(manager);
+
+        if(notificationManager){
+          await this.notificationRepository.remove(notificationManager);
+        }
         return 'Manager deleted successfully';
       } else {
         throw new NotFoundException('Manager not found');
       }
     }
+
 
 
 
@@ -209,6 +213,32 @@ export class AdminService {
 
       return null;
     }
+
+
+    // async getNewManagers(): Promise<ManagerEntity[]> {
+    //   const currentDate = new Date();
+    //   currentDate.setMinutes(currentDate.getMinutes() - 1); // Adjust the time as needed
+    //   return this.managerRepository.createQueryBuilder('manager')
+    //       .where('manager.joiningTime > :date', { date: currentDate })
+    //       .getMany();
+    // }
+
+
+     // 11--> Un/mute (On/Off) notification
+    async setNotificationStatus(token:string , status:string): Promise<AdminEntity|null> {
+          const adminId = this.getAdminIdFromToken(token);
+          const existingUser = await this.adminRepository.findOne({ where: { adminId } });
+  
+      if (!existingUser) {
+          return null; 
+      }
+  
+      await this.adminRepository.update({ adminId }, {notificationStatus:status});
+  
+      // Retrieve the updated user
+      return this.adminRepository.findOne({ where: { adminId } });
+    }
+  
 
     
     

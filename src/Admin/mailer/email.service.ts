@@ -1,5 +1,3 @@
-// email.service.ts
-
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
@@ -12,14 +10,14 @@ export class EmailService {
       service: 'gmail',
       auth: {
         user: 'fsspring22@gmail.com',
-        pass: ,
+        pass: '',
     },
     });
   }
 
   async sendMail(to: string, subject: string, text: string) {
     const mailOptions = {
-      from: 'fsspring22@gmail.com', // Replace with your Gmail email
+      from: 'fsspring22@gmail.com', 
       to,
       subject,
       text,
