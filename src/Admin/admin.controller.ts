@@ -10,6 +10,7 @@ import { JwtAuthGuard } from "./jwt.guard";
 import { ManagerInfo } from "./dtos/manager.dto";
 import { EmailService } from "./mailer/email.service";
 import { NotificationService } from "./notification/notification.service";
+import { AdminProfileEntity } from "./entitys/profile.entity";
   
 
 @Controller('admin')
@@ -51,11 +52,18 @@ export class AdminController{
 
         const accountData = {
             adminId: adminInfo.adminId,
-            name:adminInfo.name,
             gmail: adminInfo.gmail,
             password: hashPassword,
+            name: adminInfo.name,
             pic: file ? file.filename : null,
+    
         };
+        // const profileData = {
+        //     name:adminInfo.name,
+        //     pic: file ? file.filename : null,
+        //     admin: accountData
+            
+        // };
 
         const result = await this.adminService.createAccount(accountData);
 
@@ -91,30 +99,32 @@ export class AdminController{
     )  {
     
         const existingUser = await this.adminService.findUserById(adminId);
+
     
     if (!existingUser) {
         return { message: 'User not found' };
     }
 
-    const updatedData: Partial<AdminEntity> = {}; 
+    const adminData: Partial<AdminEntity> = {};
+    const profileData: Partial<AdminProfileEntity> = {};
 
     if (updatedInfo.name) {
-        updatedData.name = updatedInfo.name;
+        profileData.name = updatedInfo.name;
     }
 
     if (updatedInfo.gmail) {
-        updatedData.gmail = updatedInfo.gmail;
+        adminData.gmail = updatedInfo.gmail;
     }
     if(updatedInfo.password){
         const hashPassword = await bcrypt.hash(updatedInfo.password, 10);
-        updatedData.password = hashPassword;
+        adminData.password = hashPassword;
     }
 
     if (file) {
-        updatedData.pic = file.filename;
+        profileData.pic = file.filename;
     }
 
-        const result = await this.adminService.updateUser(adminId, updatedData);
+        const result = await this.adminService.updateUser(adminId, adminData, profileData);
 
         return result; 
     }
@@ -237,6 +247,7 @@ export class AdminController{
 
     // 11--> Un/mute (On/Off) notification
 
+    @UseGuards(JwtAuthGuard)
     @Patch('notificationStatus/:status')
     async setNotificationStatus(@Param('status') status:string,
     @Req() request: Request){

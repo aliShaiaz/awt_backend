@@ -6,6 +6,8 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt';
 import { ManagerEntity } from "./entitys/manager.entity";
 import { NotificationEntity } from "./entitys/notification.entity";
+import { AdminProfileEntity } from "./entitys/profile.entity";
+import { AdminInfo } from "./dtos/admin.dto";
 
 
 @Injectable()
@@ -19,6 +21,7 @@ export class AdminService {
         @InjectRepository(AdminEntity) private readonly adminRepository: Repository<AdminEntity>,
         @InjectRepository(ManagerEntity) private readonly managerRepository: Repository<ManagerEntity>, 
         @InjectRepository(NotificationEntity) private readonly notificationRepository: Repository<NotificationEntity>,
+        @InjectRepository(AdminProfileEntity) private readonly adminProfileRepository: Repository<AdminProfileEntity>,
     )
     {
         this.adminRepo = adminRepository;
@@ -57,14 +60,31 @@ export class AdminService {
 
     // 1--> Create account
 
-    async createAccount(data: any): Promise<AdminEntity>{
-      return this.adminRepo.save(data);
+    async createAccount(adminData: AdminInfo,): Promise<AdminEntity>{
+      const admin = new AdminEntity();
+      admin.adminId = adminData.adminId;
+      admin.gmail = adminData.gmail;
+      admin.password = adminData.password;
+
+      const profile = new AdminProfileEntity();
+      profile.name = adminData.name;
+      profile.pic = adminData.pic;
+      profile.admin = admin;
+      
+      const adminA = await this.adminRepo.save(adminData);
+      await this.adminProfileRepository.save(profile)
+      //return this.adminRepo.save(adminData);
+      return (adminA)
     }
+
+  
+  
+  
 
 
     // 2--> Update Account
 
-    async updateUser(adminId: string, updatedData: Partial<AdminEntity>): Promise<AdminEntity | null> {
+    async updateUser(adminId: string, adminData: Partial<AdminEntity>, profileData:Partial<AdminProfileEntity>): Promise<AdminEntity | null> {
       const existingUser = await this.adminRepository.findOne({ where: { adminId } });
   
       if (!existingUser) {
@@ -72,28 +92,47 @@ export class AdminService {
       }
   
       // Use the update method to apply the changes
-      await this.adminRepository.update({ adminId }, updatedData);
+      await this.adminRepository.update({ adminId }, adminData);
+
+      await this.adminProfileRepository.update({ admin: existingUser }, profileData);
   
       // Retrieve the updated user
       return this.adminRepository.findOne({ where: { adminId } });
     }
-    
+
+    // async updateProfile(adminId:string,profileData:Partial<AdminProfileEntity>) {
+    //   const existingUser = await this.adminRepository.findOne({ where: { adminId } });
+  
+    //   if (!existingUser) {
+    //       return null; // Return null if user not found
+    //   }
+  
+    //   await this.adminProfileRepository.update({adminId},profileData)
+  
+    //   return this.adminRepository.findOne({ where: { adminId } });
+    // }
 
 
     // 3--> Delete account
 
     async deleteAccount(adminId: string): Promise<void> {
-      const admin = await this.adminRepository.findOne({ where: { adminId }, relations: ['managers', 'notifications'] });
+      const admin = await this.adminRepository.findOne({ where: { adminId }, relations: ['managers', 'notifications','profile'] });
     
       if (!admin) {
         throw new NotFoundException('Admin not found');
       }
     
       //Here I remove associated managers first
+      if(admin.managers){
       await this.managerRepository.remove(admin.managers);
-    
+      }
       //Then associated notifications
+      if(admin.notifications){
       await this.notificationRepository.remove(admin.notifications);
+      }
+      if(admin.profile){
+      await this.adminProfileRepository.remove(admin.profile);
+      }
     
       // Finally, remove the admin
       await this.adminRepository.remove(admin);

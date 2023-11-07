@@ -9,10 +9,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './jwt.guard';
 import { EmailService } from './mailer/email.service';
 import { NotificationService } from './notification/notification.service';
+import { AdminProfileEntity } from './entitys/profile.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AdminEntity,ManagerEntity,NotificationEntity]),
+        TypeOrmModule.forFeature([AdminEntity,ManagerEntity,NotificationEntity,AdminProfileEntity]),
         JwtModule.register({
             global: true,
             secret: 'my-secret', 
