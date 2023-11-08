@@ -11,6 +11,7 @@ import { ManagerInfo } from "./dtos/manager.dto";
 import { EmailService } from "./mailer/email.service";
 import { NotificationService } from "./notification/notification.service";
 import { AdminProfileEntity } from "./entitys/profile.entity";
+import { BuyerInfo } from "./dtos/buyer.dto";
   
 
 @Controller('admin')
@@ -177,7 +178,6 @@ export class AdminController{
     @Body() managerData: ManagerInfo,
     @Req() request: Request,
     ) {
-    console.log('hi');
     const managerExist = await this.adminService.managerExist(managerData.managerId);
     if (!managerExist) {
         const token = request.cookies['token'];
@@ -257,6 +257,23 @@ export class AdminController{
         return admin;
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Post('addBuyer')
+    async addBuyer(@Body() buyerData: BuyerInfo) {
+     try {
+      const buyer = await this.adminService.addBuyer(buyerData);
+      return buyer;
+      } catch (error) {
+      return { message: error.message };
+      }
+    }
+
+    @Get('getAllBuyers')
+    async getAllBuyers() {
+      const buyers = await this.adminService.getAllBuyers();
+      return { buyers };
+    }
+    
 
     
 

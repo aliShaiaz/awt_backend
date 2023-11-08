@@ -8,6 +8,8 @@ import { ManagerEntity } from "./entitys/manager.entity";
 import { NotificationEntity } from "./entitys/notification.entity";
 import { AdminProfileEntity } from "./entitys/profile.entity";
 import { AdminInfo } from "./dtos/admin.dto";
+import { BuyerInfo } from "./dtos/buyer.dto";
+import { BuyerEntity } from "./entitys/buyer.entity";
 
 
 @Injectable()
@@ -22,6 +24,7 @@ export class AdminService {
         @InjectRepository(ManagerEntity) private readonly managerRepository: Repository<ManagerEntity>, 
         @InjectRepository(NotificationEntity) private readonly notificationRepository: Repository<NotificationEntity>,
         @InjectRepository(AdminProfileEntity) private readonly adminProfileRepository: Repository<AdminProfileEntity>,
+        @InjectRepository(BuyerEntity) private readonly buyerRepository:Repository<BuyerEntity>,
     )
     {
         this.adminRepo = adminRepository;
@@ -279,6 +282,31 @@ export class AdminService {
     }
   
 
+    async addBuyer(buyerInfo: BuyerInfo): Promise<BuyerEntity|string> {
+      const existingBuyer = await this.buyerRepository.findOne({ where: { buyerEmail: buyerInfo.buyerEmail } });
+
+      if (existingBuyer) {
+        throw new Error('Buyer with this email already exists');
+      }
+
+      const buyer = new BuyerEntity();
+      buyer.buyerFirstName = buyerInfo.buyerFirstName;
+      buyer.buyerLastName = buyerInfo.buyerLastName;
+      buyer.buyerEmail = buyerInfo.buyerEmail;
+      buyer.buyerDateOfBirth = buyerInfo.buyerDateOfBirth;
+      buyer.buyerPhoneNo = buyerInfo.buyerPhoneNo;
+      buyer.buyerGender = buyerInfo.buyerGender;
+      buyer.buyerAddresses = buyerInfo.buyerAddresses;
+      buyer.buyerimage = buyerInfo.buyerimage;
+    
+      return this.buyerRepository.save(buyer);
+    }
+
+    async getAllBuyers(): Promise<BuyerEntity[]> {
+      return this.buyerRepository.find();
+    }
+    
+    
     
     
 

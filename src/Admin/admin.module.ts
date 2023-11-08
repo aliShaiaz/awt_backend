@@ -10,10 +10,12 @@ import { JwtAuthGuard } from './jwt.guard';
 import { EmailService } from './mailer/email.service';
 import { NotificationService } from './notification/notification.service';
 import { AdminProfileEntity } from './entitys/profile.entity';
+import { BuyerEntity } from './entitys/buyer.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AdminEntity,ManagerEntity,NotificationEntity,AdminProfileEntity]),
+        TypeOrmModule.forFeature([AdminEntity,ManagerEntity,NotificationEntity,AdminProfileEntity,
+        BuyerEntity,]),
         JwtModule.register({
             global: true,
             secret: 'my-secret', 
