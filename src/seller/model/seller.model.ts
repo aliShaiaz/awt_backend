@@ -7,7 +7,7 @@ export enum SellerStatusEnum{
     PremiumSupportSeller = 'Premium Support Seller',
     // 🔰 karor AfterSalesExperience er review / rating valo hole 
     // 🔰 seller er status PremiumSupportSeller hobe
-    BestSeller = 'Top Seller',
+    BestSeller = 'Best Seller',
     // 🔰 karor PositiveReview er rating valo hole
     TopSeller = 'Top Seller',
     // 🔰 karor shob cheye beshi product sell hole 

@@ -243,25 +243,6 @@ export class SellerService {
     
   }
 
-  // 6 done fully🔴
-  sellerLogin(req){ 
-    
-    // const seller = this.sellers.find(seller => seller.sellerEmailAddress == loginSellerDto.sellerEmailAddress && seller.sellerPassword == loginSellerDto.sellerPassword);
-   
-    // if(seller){
-    //   const {id} = seller; // id destructure korlam 
-
-    //   // id destructure kore id return korte pari .. 
-    //   return 2;
-    // }
-    
-    return req.user;
-  }
-
-  sellerLoginWithJWT(req){
-    return this.sellerAuthService.loginWithJWT(req.user);
-  }
-
 
   //8 🟢🔴 // id cant assign manually .. id set automatically
   async createNewProduct(createProductDto) : Promise<Product>{

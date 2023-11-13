@@ -36,10 +36,22 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       }
       );
     }
-    // if (!seller) {
-    //   //throw new UnauthorizedException();
+    if (!seller) {
+      //throw new UnauthorizedException();
+      throw new HttpException(
+        {
+          status : HttpStatus.UNAUTHORIZED, // statusCode - 401
+          error : "Custom Error Message from local-stategy.ts : Credential is wrong", // short description
+        }, 
+        HttpStatus.UNAUTHORIZED // 2nd argument which is status 
+        ,
+        // {
+        //   //optional //provide an error cause. 
+        //   // cause : err
+        // }
+        );
       
-    // }
+    }
     return seller;
   }
 }

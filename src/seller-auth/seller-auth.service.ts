@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { SellerService } from 'src/seller/seller.service';
 // for jwt
 import { JwtService } from '@nestjs/jwt';
@@ -20,19 +20,53 @@ export class SellerAuthService {
     /**
      * 🔴🔴🔴🔴🔴 why seller service can not be used here ? 
      */
-    const user = await this.sellersRepository.findOneOrFail({
-      where : {sellerEmailAddress: sellerEmailAddress}
-    });
 
-    
-      const isMatch = await bcrypt.compare(sellerPassword, user.sellerPassword); //  dbpassword = user.sellerPassword
-      // console.log(isMatch, "-- seller given Password --", sellerPassword, "--  user.sellerPassword  --", user.sellerPassword);
-      // if (user && user.sellerPassword === sellerPassword) {
-      if (user && isMatch) {
-      const { sellerPassword, ...result } = user;
-      return result; // why ? 
-    }
-    return null;
+    try{
+      const user = await this.sellersRepository.findOneOrFail({
+        where : {
+                  sellerEmailAddress: sellerEmailAddress
+                  
+                }
+      });
+
+    // db te password ase hashed obosthay .. 
+
+
+        const isMatch = await bcrypt.compare(sellerPassword, user.sellerPassword); //  dbpassword = user.sellerPassword
+        console.log( "========== in seller-auth.service === ", isMatch, "-- seller given Password --", sellerPassword, "--  user.sellerPassword  --", user.sellerPassword);
+        
+        
+        // if (user && user.sellerPassword === sellerPassword) {
+          if (user && isMatch) {
+            console.log("User is found is database by email and also password is matched with hashed password from db --- in seller-auth.service.ts -> validateSeller()");
+            const { sellerPassword, ...result } = user;
+            
+            return result; // karon front-end e password send korar to dorkar nai .. password chara baki information jabe
+            }
+            else{
+              return null;
+            }
+      }catch(err){
+        console.log("============== in catch ============")
+        throw new HttpException(
+        {
+          status : HttpStatus.UNAUTHORIZED, // statusCode - 401
+          error : "Custom Error Message from local-stategy.ts : Credential is wrong form seller-auth.service.ts", // short description
+        }, 
+        HttpStatus.UNAUTHORIZED // 2nd argument which is status 
+        ,
+        {
+          //optional //provide an error cause. 
+          cause : err
+        }
+        );
+      }
+
+      console.log("============== return null from seller-auth.service.ts ============")
+
+
+
+      
   }
 
   async loginWithJWT(seller: any){

@@ -1,0 +1,7 @@
+1. 20 API -> Done 
+2. Pipes (transformation and validation), File Upload -> Partially Done 
+3. Relationship -> Done 
+4. Authentication And Session ->  Done 
+5. Exception Handling -> Partially Done 
+6. Report
+7.Mailer - Partially Done .. 

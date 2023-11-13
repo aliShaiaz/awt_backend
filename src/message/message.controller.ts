@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 //import { MessageService } from './mess.age.s.ervice.nonRelationl';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { Message } from './entities/message.entity';
 import { MessageService } from './message.service';
+import { SessionGuard } from 'src/seller-auth/session/session.guard';
 
 @Controller('seller/message') //🔰  but we want this like seller/message .. 
 // how can we do that 
@@ -43,6 +44,9 @@ export class MessageController {
   
   // I think done 🟢✔️ initial Test Done
   // showAllConversationToCurrentLoggedInUser
+  // 🔰🔰
+  @UseGuards(SessionGuard)// 🔰🔰🔰🔰🔰🔰
+  // 🔰🔰
   @Get('showAllConversation')
   showAllConversationToCurrentLoggedInUser(
     @Query('loggedInUserEmail') currentLoggedInUserEmail: string
