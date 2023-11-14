@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isNumber } from 'class-validator';
 import { Brand } from 'src/seller/entities/product/brand.entity';
@@ -15,29 +15,78 @@ export class ProductSortingService {
    ){}
   async sortByMinPriceRange(min: number) {
     // find those product whose price is minium to min number and higher
-    return await this.productRepository
-      .createQueryBuilder('product')
-      .where('product.price >= :min', { min })
-      .getMany();
+
+    // return await this.productRepository
+    //   .createQueryBuilder('product')
+    //   .where('product.price >= :min', { min })
+    //   .getMany();
+
+    const sortedProduct = this.productRepository
+    .createQueryBuilder('product')
+    .where('product.price >= :min', { min })
+    .getMany();
+
+    if((await sortedProduct).length > 0 )
+    {
+      return sortedProduct;
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "product not found in this minimum price range.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        
+        );
+    }
   }
 
   async sortAllByMaxPriceRange(max : number) {
     // return `maximum price range `+ max;
-    return await this.productRepository
+
+    const sortedProduct =  await this.productRepository
       .createQueryBuilder('product')
       .where('product.price <= :max', { max })
       .getMany();
+
+      if((await sortedProduct).length > 0 )
+      {
+        return sortedProduct;
+      }else{
+        throw new HttpException(
+          {
+            status : HttpStatus.NOT_FOUND, // statusCode - 401
+            error : "product not found in this maximum price range.", // short description
+          }, 
+          HttpStatus.NOT_FOUND // 2nd argument which is status 
+          
+          );
+      }
   }
 
   async sortAllByMinAndMaxPriceRange(min, max) {
     
 
     if(min && max){
-      return await this.productRepository
+      const sortedProduct =  await this.productRepository
       .createQueryBuilder('product')
       .where('product.price >= :min', { min })
       .andWhere('product.price <= :max', { max })
       .getMany();
+
+      if((await sortedProduct).length > 0 )
+    {
+      return sortedProduct;
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "product not found in maximum and minimum price range.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        
+        );
+    }
     }
 
     

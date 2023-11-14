@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
@@ -30,7 +30,7 @@ export class MessageService {
    
 
   // I think done 🟢
-  async createNewMessage(createMessageDto /*: CreateMessageDto*//*, senderEmail:string*/) : Promise<Message> {
+  async createNewMessage(createMessageDto /*: CreateMessageDto*//*, senderEmail:string*/) : (Promise<Message>) {
     let existFlag : boolean = false;  
     let againExistFlag : boolean = false;  
   const {receiverEmail, message, senderEmail} = createMessageDto;
@@ -147,10 +147,22 @@ export class MessageService {
         this.messagesRepository.save(newMessageWithConversationId);
         return newMessageWithConversationId;
         }else{
-          // console.log((new Date()).toISOString());
-          // console.log(new Date().toLocaleString());
-          // console.log(Date.now().toLocaleString());
+          //=======================================================
           console.log("Conversation Can not created")
+
+          throw new HttpException(
+            {
+              status : HttpStatus.NOT_FOUND, // statusCode - 401
+              error : "sender or receiver email not found.", // short description
+            }, 
+            HttpStatus.NOT_FOUND // 2nd argument which is status 
+            ,
+            // {
+            //   //optional //provide an error cause. 
+            //   cause : err
+            // }
+            );
+         
         }
       }
 
@@ -293,7 +305,20 @@ export class MessageService {
     // buyerConversation.map(buyer => {
     // console.log("buyer:::::::",buyer )
     // })
-  return buyerConversation;
+  if(buyerConversation.length > 0){
+    return buyerConversation;
+  }else{
+    
+    throw new HttpException(
+      {
+        status : HttpStatus.NOT_FOUND, // statusCode - 401
+        error : "conversation not found.", // short description
+      }, 
+      HttpStatus.NOT_FOUND // 2nd argument which is status 
+      
+      );
+  }
+  
     /////////////////////////////////////////////////////////////
   }
 
@@ -311,7 +336,20 @@ export class MessageService {
       ]
     });
 
-    return AllMessage;
+    if(AllMessage.length > 0){
+      return AllMessage;
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "No message found of this conversation.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        
+        );
+    }
+
+    
   }
 
 

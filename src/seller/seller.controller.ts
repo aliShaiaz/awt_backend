@@ -33,7 +33,7 @@ export class SellerController {
    *          -> available but low quantity ..
    *    -> then seller er kase notification jabe ..
    */
-
+  @UseGuards(SessionGuard)// 🔰
   @Get('sendEmail')
   sendEmail (){
     const to = "djxyz99@gmail.com";
@@ -62,7 +62,7 @@ export class SellerController {
 
 
   }
-
+  @UseGuards(SessionGuard)// 🔰
   @Get('logout')
   async sellerLogOut(/*@Session() session,*/ @Req() req, @Res() res){
     req.session.destroy((err) => {
@@ -75,7 +75,7 @@ export class SellerController {
     });
 
   }
-
+  @UseGuards(SessionGuard)// 🔰
   @Get("getShopLogo")
   async getShopLogo(
     @Query('sellerId', ParseIntPipe) sellerId:string,
@@ -86,7 +86,7 @@ export class SellerController {
     res.sendFile(imagePath);
   }
 
-
+  @UseGuards(SessionGuard)// 🔰
   // 9 🔰 send notification to seller as a products available quality value is same as lowest value to stock
   //🟢🟢
   @Get('checkForLowQuantity') // Almost Stock Out .. 🔰 Low Quantity
@@ -96,6 +96,7 @@ export class SellerController {
     return this.sellerService.checkForLowQuantity();
   }
 
+  @UseGuards(SessionGuard)// 🔰
   // 10 🟢🟢 give product id, who has negetive review .. also, give me those negetive review
   @Get('getAllNegetiveReview')
   getAllNegetiveReview(){
@@ -103,26 +104,27 @@ export class SellerController {
   }
 
   // 11🔰 give pre order information , if OrderStatus is Pending
-
+  @UseGuards(SessionGuard)// 🔰
   @Get('orderStatusPending') // 10 📃
   getOrderStatusPending(){
     return this.sellerService.getOrderStatusPending();
   }
 
   // 12🔰 give pre order information , if Payment is complete
-
+  @UseGuards(SessionGuard)// 🔰
   @Get('paymentCompleteOfPreOrder')
   getPaymentCompleteStatusOfPreOrder(){
     return this.sellerService.getPaymentCompleteStatusOfPreOrder();
   }
 
+  @UseGuards(SessionGuard)// 🔰
    //14 🟢🟢🔴 // review add korar pore problem kortese
    @Get('getAllProductsDetails')
    async getAllProductsDetails() : Promise<Product[]>{
     return await this.sellerService.getAllProductsDetails();
    }
 
-
+   @UseGuards(SessionGuard)// 🔰
    // 16 🟢🟢
    @UsePipes(new ValidationPipe())// Apply the validation
    @Post('addReview')
@@ -130,14 +132,16 @@ export class SellerController {
     return await this.sellerService.addReviewToAProduct(createReviewDto);
    }
 
+   @UseGuards(SessionGuard)// 🔰
    // 17 🟢🟢
    @Post('addReplyToAReview')
    async addReplyToAReview(@Body() createReviewReplyDto : CreateReviewReplyDto) : Promise<ReviewReply>{
     return await this.sellerService.addReplyToAReview(createReviewReplyDto);
    }
 
-  //1 🔰create new seller 🟢🔴
 
+  //1 🔰create new seller 🟢🔴
+  @UseGuards(SessionGuard)// 🔰
   //@UsePipes(new ValidationPipe())// Apply the validation
   @Post()// 📃7
   create(@Body() createSellerDto: CreateSellerDto, ) {
@@ -151,6 +155,7 @@ export class SellerController {
 
 
   //2 🔰get all seller 🟢🟢
+  @UseGuards(SessionGuard)// 🔰
   @Get()// 📃6
   async findAll() : Promise<Seller[]> {
     return this.sellerService.findAll();
@@ -158,18 +163,20 @@ export class SellerController {
 
 
   //3 🔰 get one seller by id 🟢🟢
-  @UseGuards(SessionGuard)// 🔰🔰🔰🔰🔰🔰
+  @UseGuards(SessionGuard)// 🔰
   @Get(':id')// 📃5
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Seller> {
     return this.sellerService.findOne(id);
   }
 
+  @UseGuards(SessionGuard)// 🔰
   //4 🔰 update a sellers information 🟢🟢🔴 kichu logic add korte hobe
   @Patch(':id')// 📃4
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSellerDto: UpdateSellerDto) {
     return this.sellerService.update(id, updateSellerDto);
   }
 
+  @UseGuards(SessionGuard)// 🔰
   //5 delete a seller  🟢🟢 done
   @Delete(':id') // 📃3
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -223,7 +230,7 @@ export class SellerController {
 
 
   // 8 🔰 Create a new Product 🟢🔴
-
+  @UseGuards(SessionGuard)// 🔰
   @Post('createProduct')// 📃1
   async createNewProduct(@Body() createProductDto) : Promise<Product> {
     console.log("------------------- from controller -------------------");

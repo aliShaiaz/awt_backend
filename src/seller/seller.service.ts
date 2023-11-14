@@ -1,4 +1,4 @@
-import { Body, Injectable, NotFoundException, Post } from '@nestjs/common';
+import { Body, HttpException, HttpStatus, Injectable, NotFoundException, Post } from '@nestjs/common';
 import { CreateSellerDto } from './dto/seller/create-seller.dto';
 import { UpdateSellerDto } from './dto/seller/update-seller.dto';
 import { Seller } from './entities/seller.entity';
@@ -50,6 +50,7 @@ export class SellerService {
 
   // 1 done // 🟢🔴
   async create(createSellerDto: CreateSellerDto) : Promise<Seller> {
+    // try catch use korte hobe ..
     let newSeller;
     let sellerPassword = createSellerDto.sellerPassword;
     const salt = await bcrypt.genSalt();
@@ -123,6 +124,14 @@ export class SellerService {
     if(user){
        sellerShopLogo = await user.shopLogo;
        sellerImage = await user.sellerImage;
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "user not found.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        );
     }
     console.log(sellerShopLogo,"----",sellerImage)
     return sellerShopLogo;
@@ -142,6 +151,14 @@ export class SellerService {
       return await this.sellersRepository.findOne({ //🟢 findOneOrFail use korte hobe ..
         where: {id} // 🤔😥 // it means {id : id}
       });
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "user not found.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        );
     }
     //return this.sellers.find(seller => seller.id == id);
   }
@@ -219,9 +236,16 @@ export class SellerService {
       // await this.sellersRepository.update(id, seller);
       await this.sellersRepository.save(seller);
       return this.findOne(id); // 😥
+    }else{
+      throw new HttpException(
+        {
+          status : HttpStatus.NOT_FOUND, // statusCode - 401
+          error : "Cant find that user.", // short description
+        }, 
+        HttpStatus.NOT_FOUND // 2nd argument which is status 
+        );
     }
     
-    return `Cant find that User`;
   }
 
   // 5 done 🟢🟢
@@ -304,6 +328,7 @@ export class SellerService {
     // return 
   }
 
+  
   // 17 🟢🟢 
   async addReplyToAReview(createReviewReplyDto){
     
