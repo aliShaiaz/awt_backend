@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, Unique, OneToMany, OneToOne } from "typeorm";
+import { Entity, Column, PrimaryColumn, Unique, OneToMany, OneToOne, JoinColumn } from "typeorm";
 import { ManagerEntity } from "./manager.entity";
 import { NotificationEntity } from "./notification.entity";
 import { AdminProfileEntity } from "./profile.entity";
@@ -24,6 +24,7 @@ export class AdminEntity{
 
     @OneToOne(()=>AdminProfileEntity,profile => profile.admin, { cascade: true, onDelete: 'CASCADE' })
     profile:AdminProfileEntity;
+
 
 
 }

@@ -10,6 +10,13 @@ import { AdminProfileEntity } from "./entitys/profile.entity";
 import { AdminInfo } from "./dtos/admin.dto";
 import { BuyerInfo } from "./dtos/buyer.dto";
 import { BuyerEntity } from "./entitys/buyer.entity";
+import { SellerInfo } from "./dtos/seller.dto";
+import { SellerEntity } from "./entitys/seller.entity";
+import { SuppliedProductInfo } from "./dtos/suppliedProduct.dto";
+import { SupplierProfileEntity } from "./entitys/supplierProfile.entity";
+import { SupplierProfileInfo } from "./dtos/supplierProfile.dto";
+import { SuppliedProductEntity } from "./entitys/suppliedProduct.entity";
+
 
 
 @Injectable()
@@ -25,6 +32,9 @@ export class AdminService {
         @InjectRepository(NotificationEntity) private readonly notificationRepository: Repository<NotificationEntity>,
         @InjectRepository(AdminProfileEntity) private readonly adminProfileRepository: Repository<AdminProfileEntity>,
         @InjectRepository(BuyerEntity) private readonly buyerRepository:Repository<BuyerEntity>,
+        @InjectRepository(SellerEntity) private readonly sellerRepository:Repository<SellerEntity>,
+        @InjectRepository(SupplierProfileEntity) private readonly supplierProfileRepository: Repository<SupplierProfileEntity>,
+        @InjectRepository(SuppliedProductEntity) private readonly suppliedProductRepository: Repository<SuppliedProductEntity>,
     )
     {
         this.adminRepo = adminRepository;
@@ -282,6 +292,8 @@ export class AdminService {
     }
   
 
+    // Buyers operation
+
     async addBuyer(buyerInfo: BuyerInfo): Promise<BuyerEntity|string> {
       const existingBuyer = await this.buyerRepository.findOne({ where: { buyerEmail: buyerInfo.buyerEmail } });
 
@@ -305,9 +317,145 @@ export class AdminService {
     async getAllBuyers(): Promise<BuyerEntity[]> {
       return this.buyerRepository.find();
     }
+
+
+    // Seller operation
+
+    async createSeller(createSellerDto: SellerInfo): Promise<SellerEntity|string> {
+      const { sellerEmailAddress } = createSellerDto;
+  
+      const existingSeller = await this.sellerRepository.findOne({
+        where: { sellerEmailAddress },
+      });
+  
+      if (existingSeller) {
+        throw new Error('Seller with this email already exists');
+      }
+  
+      const seller = this.sellerRepository.create(createSellerDto);
+      return await this.sellerRepository.save(seller);
+    }
+
+
+
+    async findSellerById(id: number): Promise<SellerEntity | string> {
+      const seller = await this.sellerRepository.findOne({where:{id}});
+  
+      if (!seller) {
+        throw new NotFoundException('Seller not found');
+      }
+  
+      return seller;
+    }
+
+
+    async getAllSellers(): Promise<SellerEntity[]> {
+      return await this.sellerRepository.find();
+    }
+    
+
+
+    async updateSellerStatus(id: number, status: string): Promise<SellerEntity | string> {
+      const seller = await this.sellerRepository.findOne({where:{id}});
+  
+      if (!seller) {
+        throw new NotFoundException('Seller not found');
+      }
+  
+      seller.status = status;
+      await this.sellerRepository.save(seller);
+  
+      return seller;
+    }
     
     
-    
+
+    // Supplier part
+    async saveSupplierProfile(supplierInfo: SupplierProfileInfo): Promise<SupplierProfileEntity | string> {
+      try {
+          // Check if the email already exists
+          const existingSupplier = await this.supplierProfileRepository.findOne({ where: { gmail: supplierInfo.gmail } });
+
+          if (existingSupplier) {
+              return "Supplier with this email already exists.";
+          }
+
+          // Create a new supplier profile
+          const newSupplier = new SupplierProfileEntity();
+          newSupplier.name = supplierInfo.name; // Set the "namae" property
+          newSupplier.gmail = supplierInfo.gmail;
+
+          // Save the new supplier profile
+          return await this.supplierProfileRepository.save(newSupplier);
+
+      } catch (error) {
+          console.error("Error saving supplier profile:", error);
+          return "Error saving supplier profile.";
+      }
+  }
+
+
+  async deleteSupplier(supplierId: number): Promise<string> {
+    try {
+        // Check if the supplier with the provided ID exists
+        const supplier = await this.supplierProfileRepository.findOne({where:{supplierId},  relations: ['suppliedProduct'] });
+
+        if (!supplier) {
+            return "Supplier with the provided ID does not exist.";
+        }
+
+        // Delete the associated supplied products
+        if (supplier.suppliedProduct && supplier.suppliedProduct.length > 0) {
+          await this.suppliedProductRepository.remove(supplier.suppliedProduct);
+      }
+
+        // Delete the supplier
+        await this.supplierProfileRepository.remove(supplier);
+
+        return "Supplier deleted successfully.";
+    } catch (error) {
+        console.error("Error deleting supplier:", error);
+        return "Error deleting supplier.";
+    }
+}
+
+
+  async saveSuppliedProduct(supplierId: number, productInfo: SuppliedProductInfo): Promise<SuppliedProductEntity| string> {
+    try {
+        // Check if the supplier with the provided ID exists
+        const supplier = await this.supplierProfileRepository.findOne({where:{supplierId}});
+
+        if (!supplier) {
+            return "Supplier with the provided ID does not exist.";
+        }
+
+     
+      const existingProduct = await this.suppliedProductRepository.findOne({
+        where: {
+            product_name: productInfo.name,
+            supplierProfile: supplier as any,
+        },
+    });
+
+    if (existingProduct) {
+        return "This product from this supplier already exists.";
+    }
+
+        // Create a new supplied product
+        const newSuppliedProduct = this.suppliedProductRepository.create({
+            product_name: productInfo.name,
+            catergory: productInfo.category,
+            supplierProfile: supplier, // Assign the supplier to the supplied product
+        });
+
+        // Save the new supplied product
+        return await this.suppliedProductRepository.save(newSuppliedProduct);
+
+    } catch (error) {
+        console.error("Error saving supplied product:", error);
+        return "Error saving supplied product.";
+    }
+}
     
 
 }

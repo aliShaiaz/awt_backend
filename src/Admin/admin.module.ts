@@ -11,11 +11,14 @@ import { EmailService } from './mailer/email.service';
 import { NotificationService } from './notification/notification.service';
 import { AdminProfileEntity } from './entitys/profile.entity';
 import { BuyerEntity } from './entitys/buyer.entity';
+import { SellerEntity } from './entitys/seller.entity';
+import { SupplierProfileEntity } from './entitys/supplierProfile.entity';
+import { SuppliedProductEntity } from './entitys/suppliedProduct.entity';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AdminEntity,ManagerEntity,NotificationEntity,AdminProfileEntity,
-        BuyerEntity,]),
+        BuyerEntity,SellerEntity, SuppliedProductEntity, SupplierProfileEntity, ]),
         JwtModule.register({
             global: true,
             secret: 'my-secret', 

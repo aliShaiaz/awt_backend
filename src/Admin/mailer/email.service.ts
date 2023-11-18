@@ -10,7 +10,7 @@ export class EmailService {
       service: 'gmail',
       auth: {
         user: 'fsspring22@gmail.com',
-        pass: '',
+        pass: 'uaim jssz jkac unrj',
     },
     });
   }

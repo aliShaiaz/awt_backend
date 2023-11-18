@@ -12,8 +12,9 @@ export class AdminProfileEntity{
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     joiningDate: Date;
 
-    @OneToOne(()=> AdminEntity,admin => admin.profile)
-    @JoinColumn({name:'adminId'})
+
+    @OneToOne(() => AdminEntity, admin => admin.profile)
+    @JoinColumn({ name: 'adminId' })
     admin: AdminEntity;
 
 }

@@ -1,4 +1,4 @@
-import { Body, Post,Controller,Get, UploadedFile, UseInterceptors, UsePipes, ValidationPipe, Param, Patch, Delete, UnauthorizedException, Res, Req, UseGuards, } from "@nestjs/common";
+import { Body, Post,Controller,Get, UploadedFile, UseInterceptors, UsePipes, ValidationPipe, Param, Patch, Delete, UnauthorizedException, Res, Req, UseGuards, ParseIntPipe, NotFoundException, } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import * as bcrypt from 'bcrypt';
 import { MulterError, diskStorage } from "multer";
@@ -12,7 +12,10 @@ import { EmailService } from "./mailer/email.service";
 import { NotificationService } from "./notification/notification.service";
 import { AdminProfileEntity } from "./entitys/profile.entity";
 import { BuyerInfo } from "./dtos/buyer.dto";
-  
+import { SellerInfo } from "./dtos/seller.dto";
+import { SupplierProfileInfo } from "./dtos/supplierProfile.dto";  
+import { SuppliedProductInfo } from "./dtos/suppliedProduct.dto";
+import { SuppliedProductEntity } from "./entitys/suppliedProduct.entity";
 
 @Controller('admin')
 export class AdminController{
@@ -75,6 +78,7 @@ export class AdminController{
     // 2--> updateAccount
 
     //localhost:3000/admin/updateAccount/m1
+    @UseGuards(JwtAuthGuard)
     @Patch('updateAccount/:id') // Use PATCH method for updates
     @UseInterceptors(FileInterceptor('file', { 
         fileFilter: (req, file, cb) => {
@@ -132,6 +136,7 @@ export class AdminController{
 
 
     // 3-->> delete admin account along with all associater manager
+    @UseGuards(JwtAuthGuard)
     @Delete('deleteAccount/:id')
   async deleteAccount(@Param('id') adminId: string) {
     await this.adminService.deleteAccount(adminId);
@@ -140,7 +145,7 @@ export class AdminController{
 
    //4--> login
 
-    @Post('login')
+   @Post('login')
    @UsePipes(new ValidationPipe)
      async login(
         @Body('adminId') adminId: string,
@@ -161,6 +166,7 @@ export class AdminController{
 
 
      // 5--> Logout
+    @UseGuards(JwtAuthGuard)
     @Post('logout')
     logout(@Res() response: Response) {
         response.clearCookie('token'); // Clear the JWT cookie
@@ -216,7 +222,7 @@ export class AdminController{
 
 
      // 9--> Get a manager by ID
-     @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('getManagerById/:managerId')
     async getManagerById(@Param('managerId') managerId: string) {
      const managers = await this.adminService.getManagerById(managerId);
@@ -224,6 +230,7 @@ export class AdminController{
    }
 
      // 10--> Comunicate with manager throw Email
+    @UseGuards(JwtAuthGuard)
     @Post('sendMail/:managerId')
      async sendMail(
      @Param('managerId') managerId: string,
@@ -259,6 +266,7 @@ export class AdminController{
 
     @UseGuards(JwtAuthGuard)
     @Post('addBuyer')
+    @UsePipes(new ValidationPipe)
     async addBuyer(@Body() buyerData: BuyerInfo) {
      try {
       const buyer = await this.adminService.addBuyer(buyerData);
@@ -268,14 +276,114 @@ export class AdminController{
       }
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('getAllBuyers')
     async getAllBuyers() {
       const buyers = await this.adminService.getAllBuyers();
       return { buyers };
     }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post('createSeller')
+    @UsePipes(new ValidationPipe)
+    async createSeller(@Body() createSellerDto: SellerInfo) {
+        try{
+            return await this.adminService.createSeller(createSellerDto);
+        } catch(error){
+            if(error instanceof Error){
+                return { message: error.message }
+            }
+            throw error;
+        }
+      
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('getSellerById/:id')
+    async getSellerById(@Param('id',ParseIntPipe) id: number) {
+      try {
+        const seller = await this.adminService.findSellerById(id);
+        return seller;
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          return { message: error.message };
+        }
+        throw error;
+      }
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get('getAllSeller')
+    async getAllSellers() {
+      return await this.adminService.getAllSellers();
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('changeSellerStatus/:id')
+    async updateSellerStatus(
+    @Param('id',ParseIntPipe) id: number,
+    @Body('status') status: string,
+    ) {
+     try {
+      const updatedSeller = await this.adminService.updateSellerStatus(id, status);
+      return updatedSeller;
+     } catch (error) {
+      if (error instanceof NotFoundException) {
+        return { message: error.message };
+      }
+      throw error;
+     }
+    }
     
 
-    
+    // Supplier part
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post('addSupplier')
+    @UsePipes(new ValidationPipe)
+    async saveSupplierProfile(@Body() supplierInfo: SupplierProfileInfo) {
+        try {
+            const result = await this.adminService.saveSupplierProfile(supplierInfo);
+            return result;
+        } catch (error) {
+            console.error("Error in saveSupplierProfile:", error);
+            return "Error saving supplier profile.";
+        }
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('deleteSupplier/:supplierId')
+    async deleteSupplier(@Param('supplierId') supplierId: number): Promise<string> {
+        try {
+            const result = await this.adminService.deleteSupplier(supplierId);
+            return result;
+        } catch (error) {
+            console.error("Error in deleteSupplier:", error);
+            return "Error deleting supplier.";
+        }
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post('saveSuppliedProduct/:supplierId')
+    @UsePipes(new ValidationPipe)
+    async saveSuppliedProduct(@Param('supplierId') supplierId: number, @Body() productInfo: SuppliedProductInfo): Promise<SuppliedProductEntity| string> {
+        try {
+            const result = await this.adminService.saveSuppliedProduct(supplierId, productInfo);
+            return result;
+        } catch (error) {
+            console.error("Error in saveSuppliedProduct:", error);
+            return "Error saving supplied product.";
+        }
+    }
 
 
 

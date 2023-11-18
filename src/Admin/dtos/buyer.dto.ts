@@ -11,6 +11,7 @@ export class BuyerInfo{
  
  
   @IsNotEmpty()
+  @IsEmail()
   buyerEmail: string;
  
   buyerDateOfBirth: Date;
