@@ -1,20 +1,29 @@
-import { IsDate, IsDecimal, IsNumber, IsArray, IsObject } from 'class-validator';
+
+import { IsArray, IsDate, IsDecimal, IsInt, IsObject, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
-import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { Product } from 'src/product/entities/product.entity';
 
 export class CreateOrderDto {
-  @IsNumber()
-  order_id: number;
+  @IsInt()
+  id: number;
+
+  @IsDate()
+  createdAt: Date;
 
   @IsObject()
   buyer: Buyer;
 
-  @IsDate()
-  order_date: Date;
-
-  @IsDecimal()
-  total_price: number;
-  
   @IsArray()
-  orderItems: OrderItem[];
+  @IsObject({ each: true })
+  products: Product[];
+
+  @IsDecimal({ decimal_digits: '2' })
+  totalPrice: number;
+
+  @IsInt()
+  quantity: number;
+
+  @IsString()
+  status_name: string;
 }

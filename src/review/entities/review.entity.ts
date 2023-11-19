@@ -1,6 +1,6 @@
+import { Buyer } from 'src/buyer/entities/buyer.entity';
+import { Product } from 'src/product/entities/product.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Buyer } from 'src/buyer/entities/buyer.entity'; // Adjust the import path
-import { Product } from 'src/product/entities/product.entity'; // Adjust the import path
 
 @Entity()
 export class Review {
@@ -18,4 +18,7 @@ export class Review {
 
   @Column({ type: 'int' })
   rating: number;
+
+  @Column({ type: 'simple-array', nullable: true })
+  images: string[];
 }

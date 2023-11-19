@@ -26,6 +26,7 @@ import { MulterError, diskStorage } from 'multer';
 import { hash } from 'bcrypt';
 import { AuthGuard } from 'src/utility/authentication/auth.guard';
 import session from 'express-session';
+import { CreditCartDTO } from './dto/credit-card.dto';
 
 @Controller('buyer')
 export class BuyerController {
@@ -35,6 +36,7 @@ export class BuyerController {
 
 
   @Post('signup')
+  @UsePipes(ValidationPipe)
   @UseInterceptors(
     FileInterceptor('BuyerImage', {
       fileFilter: (req, file, cb) => {
@@ -75,6 +77,7 @@ export class BuyerController {
 
 
   @Post('login')
+  @UsePipes(ValidationPipe)
   async login(@Body() buyerLoginDto: BuyerLoginDto, @Session() session) {
     const buyer = await this.buyerService.login(buyerLoginDto);
     if (buyer) {
@@ -173,6 +176,14 @@ export class BuyerController {
       throw new HttpException('No active session found', HttpStatus.BAD_REQUEST);
     }
   }
+
+
+
+  //------------------------------------------------------------------------
+
+
+
+  
 
 
 }

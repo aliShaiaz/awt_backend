@@ -102,4 +102,14 @@ export class ProductController {
     const products = await this.productService.productByCategory(category);
     return products;
   }
+
+
+  //------------------------------------------------------------------------------------------
+
+
+  @Get('search/:productName')
+  async searchProduct(@Param('productName') productName: string) {
+    const products = await this.productService.searchProduct(productName);
+    return products;
+  }
 }

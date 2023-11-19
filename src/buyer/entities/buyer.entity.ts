@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne } from 'typeorm';
 import { Order } from 'src/order/entities/order.entity';
+import { CreditCartEntity } from './credit-card.entity';
 
 @Entity()
 export class Buyer {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -39,4 +41,9 @@ export class Buyer {
   orders: Order[];
   reviews: any;
   notifications: any;
+
+
+  @OneToOne(() => CreditCartEntity, (creditCard) => creditCard.buyer)
+  @JoinColumn()
+  creditCard: CreditCartEntity;
 }

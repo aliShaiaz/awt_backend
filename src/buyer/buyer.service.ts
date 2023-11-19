@@ -6,14 +6,16 @@ import { Buyer } from './entities/buyer.entity';
 import { Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { BuyerLoginDto } from './dto/login-buyer.dto';
-import { extname, join } from 'path';
 import { MailerService } from '@nestjs-modules/mailer';
+import { CreditCartDTO } from './dto/credit-card.dto';
+import { CreditCartEntity } from './entities/credit-card.entity';
 
 @Injectable()
 export class BuyerService {
   constructor(
     @InjectRepository(Buyer) private readonly buyerRepository: Repository<Buyer>,
     private readonly mailerService: MailerService, // Add this line
+    @InjectRepository(CreditCartEntity) private readonly creditCardRepository: Repository<CreditCartEntity>,
   ) {}
 
 
@@ -41,7 +43,7 @@ export class BuyerService {
 
     this.mailerService.sendMail({
       to: savedBuyer.buyerEmail,
-      from: 'your_company_email@example.com',
+      from: 'ghoreghore.customer.info@gmail.com',
       subject: 'Welcome to Our E-commerce Platform',
       text: `Hello ${savedBuyer.buyerFirstName} ${savedBuyer.buyerLastName},\n\nThank you for choosing to join our E-commerce platform. We're thrilled to have you as a member of our community.`,
       html: `
@@ -205,5 +207,9 @@ export class BuyerService {
     return this.buyerRepository.findOne({ where: { buyerEmail: email } });
   }
 
-  
+
+  //------------------------------------------------------------------------
+
+
 }
+

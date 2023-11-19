@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Param, Session, Res, Get, Req, Delete } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { Response, Request } from 'express'; // Import Request from express
+
+// Import the 'cookie' module
+import * as cookie from 'cookie';
 
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  //-----------------------------------------------------------------------
+
+  @Post(':productId')
+  async createCart(
+    @Session() session: Record<string, any>,
+    @Param('productId') productId: number,
+    @Res() res: Response
+  ) {
+    const buyerInfo = session.buyer;
+
+    if (!buyerInfo) {
+      return res.status(400).json({ message: 'Buyer information not found in the session' });
+    }
+
+    const cart = await this.cartService.createCart(buyerInfo, productId);
+
+    // Set the cookie in the response
+    res.cookie('cartId', cart.cartId.toString(), { httpOnly: true, signed: true });
+
+    // Send the cart data as a response
+    return res.json(cart);
   }
 
-  @Get()
+  //-----------------------------------------------------------------------
+
+  @Get('allcarts')
   findAll() {
-    return this.cartService.findAll();
+    return this.cartService.showAllCart();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
-  }
+  //-----------------------------------------------------------------------
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  @Delete(':productId')
+  deleteCart(@Param('productId') productId: number) {
+    return this.cartService.deleteCart(productId);
   }
 }

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
-import { CartItem } from 'src/cart-item/entities/cart-item.entity';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
+import { Product } from 'src/product/entities/product.entity';
 
 @Entity()
 export class Cart {
@@ -11,6 +11,10 @@ export class Cart {
   @JoinColumn({ name: 'BuyerId' })
   buyer: Buyer;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
-  cartItems: CartItem[];
+  // @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  // cartItems: CartItem[];
+
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'ProductId' })
+  product: Product;
 }

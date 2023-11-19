@@ -4,6 +4,9 @@ import { Brand } from 'src/brand/entities/brand.entity';
 
 @Entity()
 export class Product {
+  reduce(arg0: (acc: any, product: any) => any, arg1: number) {
+    throw new Error('Method not implemented.');
+  }
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -36,4 +39,5 @@ export class Product {
 
   @Column('json', { nullable: true }) // For orderItems, use 'json' data type (nullable if needed)
   orderItems: any;
+  length: number;
 }

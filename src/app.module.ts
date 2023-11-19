@@ -10,12 +10,8 @@ import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { BrandModule } from './brand/brand.module';
 import { CartModule } from './cart/cart.module';
-import { CartItemModule } from './cart-item/cart-item.module';
 import { OrderModule } from './order/order.module';
-import { OrderItemModule } from './order-item/order-item.module';
 import { ReviewModule } from './review/review.module';
-import { OrderStatusModule } from './order-status/order-status.module';
-import { OrderTrackingModule } from './order-tracking/order-tracking.module';
 import { NotificationModule } from './notification/notification.module';
 import { CurrentBuyerMiddleware } from './utility/middlewares/current-buyer.middleware';
 
@@ -39,12 +35,8 @@ import { CurrentBuyerMiddleware } from './utility/middlewares/current-buyer.midd
     CategoryModule,
     BrandModule,
     CartModule,
-    CartItemModule,
     OrderModule,
-    OrderItemModule,
     ReviewModule,
-    OrderStatusModule,
-    OrderTrackingModule,
     NotificationModule,
     
     ],
@@ -58,8 +50,7 @@ export class AppModule {
       .exclude(
         { path: 'buyer/login', method: RequestMethod.ALL },
         { path: 'buyer/signup', method: RequestMethod.ALL },
-        { path: 'product', method: RequestMethod.ALL }
       )
-      // .forRoutes({ path: '*', method: RequestMethod.ALL})
+      .forRoutes({ path: '*', method: RequestMethod.ALL})
   }
 }
