@@ -73,7 +73,8 @@ export class AdminService {
 
     // 1--> Create account
 
-    async createAccount(adminData: AdminInfo,): Promise<AdminEntity>{
+    async createAccount(adminData: AdminInfo,): Promise<AdminEntity|string>{
+      try{
       const admin = new AdminEntity();
       admin.adminId = adminData.adminId;
       admin.gmail = adminData.gmail;
@@ -88,6 +89,11 @@ export class AdminService {
       await this.adminProfileRepository.save(profile)
       //return this.adminRepo.save(adminData);
       return (adminA)
+      }
+      catch (error) {
+        console.error("Error is:", error);
+        return "Something went wrong";
+    }
     }
 
   
@@ -97,7 +103,8 @@ export class AdminService {
 
     // 2--> Update Account
 
-    async updateUser(adminId: string, adminData: Partial<AdminEntity>, profileData:Partial<AdminProfileEntity>): Promise<AdminEntity | null> {
+    async updateUser(adminId: string, adminData: Partial<AdminEntity>, profileData:Partial<AdminProfileEntity>): Promise<AdminEntity | null|string> {
+      try{
       const existingUser = await this.adminRepository.findOne({ where: { adminId } });
   
       if (!existingUser) {
@@ -111,24 +118,17 @@ export class AdminService {
   
       // Retrieve the updated user
       return this.adminRepository.findOne({ where: { adminId } });
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
     }
-
-    // async updateProfile(adminId:string,profileData:Partial<AdminProfileEntity>) {
-    //   const existingUser = await this.adminRepository.findOne({ where: { adminId } });
-  
-    //   if (!existingUser) {
-    //       return null; // Return null if user not found
-    //   }
-  
-    //   await this.adminProfileRepository.update({adminId},profileData)
-  
-    //   return this.adminRepository.findOne({ where: { adminId } });
-    // }
 
 
     // 3--> Delete account
 
-    async deleteAccount(adminId: string): Promise<void> {
+    async deleteAccount(adminId: string): Promise<void|string> {
+      try{
       const admin = await this.adminRepository.findOne({ where: { adminId }, relations: ['managers', 'notifications','profile'] });
     
       if (!admin) {
@@ -150,12 +150,18 @@ export class AdminService {
       // Finally, remove the admin
       await this.adminRepository.remove(admin);
     }
+    catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
+    }
     
   
 
     // 4--> Login
 
     async login(adminId: string, password: string): Promise<string> {
+      try{
       const admin = await this.adminRepository.findOne({ where: { adminId } });
       
       if (!admin) {
@@ -169,6 +175,10 @@ export class AdminService {
       }
     
       return null;
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
    }
 
 
@@ -182,7 +192,8 @@ export class AdminService {
 
       // 6--> Add Manager
     
-    async addManager(token: string, managerData: any): Promise<ManagerEntity> {
+    async addManager(token: string, managerData: any): Promise<ManagerEntity|string> {
+      try{
       const adminId = this.getAdminIdFromToken(token);
       const admin = await this.findAdminById(adminId);
   
@@ -204,6 +215,10 @@ export class AdminService {
       manager.admin = admin; // Assign the admin to the manager
   
       return this.managerRepository.save(manager);
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
     }
 
 
@@ -211,6 +226,7 @@ export class AdminService {
     // 7 --> Delete manager by Id
 
     async deleteManager(managerId: string): Promise<string> {
+      try{
       const manager = await this.managerRepository.findOne({where:{managerId}});
       const notificationManager = await this.notificationRepository.findOne({where:{managerId}});
       if (manager) {
@@ -223,6 +239,10 @@ export class AdminService {
       } else {
         throw new NotFoundException('Manager not found');
       }
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
     }
 
 
@@ -230,19 +250,25 @@ export class AdminService {
 
      // 8 -->  Get all manager
 
-    async getAllManagers(): Promise<Array<{ manager: ManagerEntity; admin: AdminEntity }>> {
+    async getAllManagers(): Promise<Array<{ manager: ManagerEntity; admin: AdminEntity }>|string> {
+      try{
       const managers = await this.managerRepository.find({ relations: ['admin'] });
     
       return managers.map((manager) => ({
         manager,
         admin: manager.admin,
       }));
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
     }
 
 
     // 9--> Get a manager by ID
 
     async getManagerById(managerId: string): Promise<{ manager: ManagerEntity, admin: AdminEntity } | string> {
+      try{
       const manager = await this.managerRepository.findOne({ where: { managerId }, relations: ['admin'] });
     
       if (manager) {
@@ -253,7 +279,11 @@ export class AdminService {
       }
 
       return "This manager does not exist";
-    }
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
+ }
 
 
     async managerById(managerId: string): Promise<ManagerEntity | null> {
@@ -277,7 +307,8 @@ export class AdminService {
 
 
      // 11--> Un/mute (On/Off) notification
-    async setNotificationStatus(token:string , status:string): Promise<AdminEntity|null> {
+    async setNotificationStatus(token:string , status:string): Promise<AdminEntity|null|string> {
+      try{
           const adminId = this.getAdminIdFromToken(token);
           const existingUser = await this.adminRepository.findOne({ where: { adminId } });
   
@@ -289,6 +320,10 @@ export class AdminService {
   
       // Retrieve the updated user
       return this.adminRepository.findOne({ where: { adminId } });
+    }catch (error) {
+      console.error("Error is:", error);
+      return "Something went wrong";
+  }
     }
   
 

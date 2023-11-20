@@ -41,7 +41,7 @@ export class NotificationService {
       notification.admin = admin;
       if(adminNotificationStatus== 'on'){
         console.log("Notification Status on");
-      await this.emailService.sendMail(currentAdminGmail,"New admin join",message);
+      await this.emailService.sendMail(currentAdminGmail,"New manager join",message);
       }
   
       try {

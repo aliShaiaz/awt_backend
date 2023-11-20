@@ -5,7 +5,7 @@ import { MulterError, diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { AdminInfo } from "./dtos/admin.dto";
 import { AdminEntity } from "./entitys/admin.entity";
-import { Response,Request, request } from 'express';
+import { Response,Request, } from 'express';
 import { JwtAuthGuard } from "./jwt.guard";
 import { ManagerInfo } from "./dtos/manager.dto";
 import { EmailService } from "./mailer/email.service";
@@ -62,12 +62,7 @@ export class AdminController{
             pic: file ? file.filename : null,
     
         };
-        // const profileData = {
-        //     name:adminInfo.name,
-        //     pic: file ? file.filename : null,
-        //     admin: accountData
-            
-        // };
+        
 
         const result = await this.adminService.createAccount(accountData);
 
@@ -139,8 +134,13 @@ export class AdminController{
     @UseGuards(JwtAuthGuard)
     @Delete('deleteAccount/:id')
   async deleteAccount(@Param('id') adminId: string) {
+    try{
     await this.adminService.deleteAccount(adminId);
-  }
+    }catch (error) {
+        console.error("Error is:", error);
+        return "Something went wrong";
+    }
+   }
 
 
    //4--> login
@@ -152,6 +152,7 @@ export class AdminController{
         @Body('password') password: string,
         @Res() response: Response, 
         ) {
+            try{
           
         const token = await this.adminService.login(adminId, password);
 
@@ -162,6 +163,10 @@ export class AdminController{
         } else {
         throw new UnauthorizedException('Invalid credentials');
         }
+    }catch (error) {
+        console.error("Error is:", error);
+        return "Something went wrong";
+    }
     }
 
 
@@ -169,8 +174,13 @@ export class AdminController{
     @UseGuards(JwtAuthGuard)
     @Post('logout')
     logout(@Res() response: Response) {
+        try{
         response.clearCookie('token'); // Clear the JWT cookie
         return response.send('Logout successfully');
+        }catch (error) {
+            console.error("Error is:", error);
+            return "Something went wrong";
+        }
     }
 
 
@@ -184,6 +194,7 @@ export class AdminController{
     @Body() managerData: ManagerInfo,
     @Req() request: Request,
     ) {
+        try{
     const managerExist = await this.adminService.managerExist(managerData.managerId);
     if (!managerExist) {
         const token = request.cookies['token'];
@@ -197,6 +208,10 @@ export class AdminController{
     console.log(managerExist);
   
     return "This manager already exists!";
+      }catch (error) {
+        console.error("Error is:", error);
+        return "Something went wrong";
+    }
     }
 
 
@@ -206,8 +221,13 @@ export class AdminController{
     @UseGuards(JwtAuthGuard)
     @Delete('deleteManager/:id')
          async deleteManager(@Param('id') managerId: string) {
-         const message = await this.adminService.deleteManager(managerId);
-         return { message };
+            try {
+                  const message = await this.adminService.deleteManager(managerId);
+                 return { message };
+            }catch (error) {
+                console.error("Error is:", error);
+                return "Something went wrong";
+            }
     }
 
 
@@ -237,6 +257,7 @@ export class AdminController{
      @Body('subject') subject: string, 
      @Body('text') text: string, 
      ) {
+        try{
      const manager = await this.adminService.managerById(managerId);
 
     if (manager && manager.gmail) {
@@ -249,6 +270,10 @@ export class AdminController{
       return { message: 'Email sent successfully' };
     } else {
       return { message: 'Manager or Admin not found' };
+    }
+     }catch (error) {
+        console.error("Error is:", error);
+        return "Something went wrong";
     }
     }
 
