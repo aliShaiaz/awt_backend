@@ -30,4 +30,5 @@ export class Manager {
 
     @OneToMany(()=>Brand,(bran)=>bran.addedBy)
     brand:Brand[];
+
 }

@@ -39,6 +39,8 @@ export class ManagerController {
       }),
     })
   )
+
+
   async signup(
     @Body() managerSignUpDto: ManagerSignUpDto,
     @UploadedFile() imageFile: Express.Multer.File
@@ -110,17 +112,20 @@ export class ManagerController {
   }
 }
 
-
+// Extend the express-session module to include a 'manager' property in the session
 declare module 'express-session' {
   interface Session {
     manager: string; 
   }
 }
 
+// Placeholder function for diskStorage (to be implemented if needed)
 function diskStorage(arg0: { destination: string; filename: (req: any, file: any, cb: any) => void; }): any {
   throw new Error('Function not implemented.');
 }
-function hash(BuyerPassword: any, saltRounds: number) {
+
+// Placeholder function for hash (to be implemented if needed)
+function hash(ManagerPassword: any, saltRounds: number) {
   throw new Error('Function not implemented.');
 }
 

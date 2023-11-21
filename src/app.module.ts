@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ManagerModule } from './manager/manager.module';
 import { CategoriesModule } from './categories/categories.module';
 import { BrandModule } from './brand/brand.module';
+import { ReviewModule } from './review/review.module';
+import { SellerModule } from './seller/seller.module';
 
 
 @Module({
@@ -15,7 +17,7 @@ import { BrandModule } from './brand/brand.module';
     TypeOrmModule.forRoot(config),
     // Modules should be register here
    
-    ManagerModule,CategoriesModule,BrandModule,
+    ManagerModule,CategoriesModule,BrandModule,ReviewModule,SellerModule,
     //.
     //.
     RouterModule.register([
@@ -28,6 +30,8 @@ import { BrandModule } from './brand/brand.module';
     ManagerModule,
     CategoriesModule,
     BrandModule,
+    ReviewModule,
+    SellerModule,
     ],
   providers: [],
   
