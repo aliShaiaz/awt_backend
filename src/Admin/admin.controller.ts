@@ -16,6 +16,7 @@ import { SellerInfo } from "./dtos/seller.dto";
 import { SupplierProfileInfo } from "./dtos/supplierProfile.dto";  
 import { SuppliedProductInfo } from "./dtos/suppliedProduct.dto";
 import { SuppliedProductEntity } from "./entitys/suppliedProduct.entity";
+import { LoginInfo } from "./dtos/loginInfo.dto";
 
 @Controller('admin')
 export class AdminController{
@@ -148,25 +149,40 @@ export class AdminController{
    @Post('login')
    @UsePipes(new ValidationPipe)
      async login(
-        @Body('adminId') adminId: string,
-        @Body('password') password: string,
+        // @Body('adminId') adminId: string,
+        // @Body('password') password: string,
+         @Body() loginInfo:LoginInfo,
         @Res() response: Response, 
-        ) {
-            try{
-          
-        const token = await this.adminService.login(adminId, password);
-
-        if (token) {
-        response.cookie('token', token, { httpOnly: true }); // Set JWT as a cookie
-        //return 'Login successful';
-        return response.send('Login successful');
-        } else {
-        throw new UnauthorizedException('Invalid credentials');
+        ) 
+        {
+          try{
+               
+         const adminId = loginInfo.adminId;
+         const password = loginInfo.password;
+                
+         console.log(adminId,password);
+                
+         const validAdmin = await this.adminService.isAdminExists(adminId); 
+         console.log(validAdmin); 
+        if(validAdmin){
+         const token = await this.adminService.login(adminId, password);
+         console.log("token:"+token);
+                
+         if (token) {
+         response.cookie('token', token, { httpOnly: true }); // Set JWT as a cookie
+         return response.send('Login successful');
+         } else {
+         return response.send('Invalid username or password');
+         }
+         }
+         else{
+            return response.send('This user does not exist!');
+         }
+         }catch (error) {
+         console.error("Error in controller:", error);
+         return "Something went wrong";
         }
-    }catch (error) {
-        console.error("Error is:", error);
-        return "Something went wrong";
-    }
+        
     }
 
 
@@ -236,8 +252,13 @@ export class AdminController{
     @UseGuards(JwtAuthGuard)
     @Get('getAllManagers')
     async getAllManagers() {
-     const managers = await this.adminService.getAllManagers();
+        try{
+        const managers = await this.adminService.getAllManagers();
         return { managers };
+        }catch (error) {
+            console.error("Error is:", error);
+            return "Something went wrong";
+        }
      }
 
 
@@ -409,7 +430,6 @@ export class AdminController{
             return "Error saving supplied product.";
         }
     }
-
 
 
 }

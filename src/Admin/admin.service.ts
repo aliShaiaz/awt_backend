@@ -41,9 +41,15 @@ export class AdminService {
     }
 
 
-    async findAdminById(adminId: string): Promise<AdminEntity | null> {
+    async findAdminById(adminId: string): Promise<AdminEntity | null > {
       return this.adminRepository.findOne({ where: { adminId } });
     }
+
+    async isAdminExists(adminId: string): Promise<boolean> {
+      const admin = await this.adminRepository.findOne({ where: { adminId } });
+      return !!admin; // Returns true if admin exists, false otherwise
+    }
+    
 
     async managerExist(managerId: string): Promise<boolean>{
       const state = await this.managerRepository.findOne({
@@ -160,26 +166,24 @@ export class AdminService {
 
     // 4--> Login
 
-    async login(adminId: string, password: string): Promise<string> {
+    async login(adminId: string, password: string): Promise<string|boolean> {
       try{
       const admin = await this.adminRepository.findOne({ where: { adminId } });
       
-      if (!admin) {
-        throw new NotFoundException('User not found');
-      }
-    
       const isValidPassword = await bcrypt.compare(password, admin.password);
       if (isValidPassword) {
         const token = await this.generateToken({ id: admin.adminId });
         return token;
       }
+      else{
+        return false;
+      }
     
-      return null;
+
     }catch (error) {
-      console.error("Error is:", error);
       return "Something went wrong";
-  }
-   }
+     }
+    }
 
 
       // Method to get the admin ID from the token
@@ -208,17 +212,14 @@ export class AdminService {
       manager.gmail = managerData.gmail;
       manager.address = managerData.address;
       manager.password = managerData.password;
-
-
-      // Set other properties as needed
   
       manager.admin = admin; // Assign the admin to the manager
   
       return this.managerRepository.save(manager);
-    }catch (error) {
+     }catch (error) {
       console.error("Error is:", error);
       return "Something went wrong";
-  }
+     }
     }
 
 
