@@ -93,7 +93,6 @@ export class AdminService {
       
       const adminA = await this.adminRepo.save(adminData);
       await this.adminProfileRepository.save(profile)
-      //return this.adminRepo.save(adminData);
       return (adminA)
       }
       catch (error) {
@@ -229,6 +228,7 @@ export class AdminService {
     async deleteManager(managerId: string): Promise<string> {
       try{
       const manager = await this.managerRepository.findOne({where:{managerId}});
+      console.log("manager is"+manager);
       const notificationManager = await this.notificationRepository.findOne({where:{managerId}});
       if (manager) {
         await this.managerRepository.remove(manager);
@@ -242,7 +242,7 @@ export class AdminService {
       }
     }catch (error) {
       console.error("Error is:", error);
-      return "Something went wrong";
+      return "Something went wrong ..";
   }
     }
 
@@ -266,25 +266,34 @@ export class AdminService {
     }
 
 
-    // 9--> Get a manager by ID
+//     // 9--> Get a manager by ID
 
-    async getManagerById(managerId: string): Promise<{ manager: ManagerEntity, admin: AdminEntity } | string> {
-      try{
-      const manager = await this.managerRepository.findOne({ where: { managerId }, relations: ['admin'] });
-    
-      if (manager) {
-        return {
-          manager,
-          admin: manager.admin,
-        };
-      }
+async getManagerById(managerId: string): Promise<{ manager: ManagerEntity, admin: AdminEntity } | string> {
+  try{
+  const manager = await this.managerRepository.findOne({ where: { managerId }, relations: ['admin'] });
 
-      return "This manager does not exist";
-    }catch (error) {
-      console.error("Error is:", error);
-      return "Something went wrong";
+  if (manager) {
+    return {
+      manager,
+      admin: manager.admin,
+    };
   }
- }
+
+  return "This manager does not exist";
+}catch (error) {
+  console.error("Error is:", error);
+  return "Something went wrong";
+}
+}
+//----------------------------------------------------------------------
+// async findManagerById(managerId: string): Promise<ManagerEntity | string> {
+//   const manager = this.managerRepository.findOne({ where: { managerId } });
+//   if(manager){
+//     return manager
+//   }
+//   return "Manager doesnot exit"
+// }
+///-------------------------------------------------------------------------
 
 
     async managerById(managerId: string): Promise<ManagerEntity | null> {

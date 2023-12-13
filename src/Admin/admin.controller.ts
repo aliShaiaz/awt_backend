@@ -131,7 +131,7 @@ export class AdminController{
     }
 
 
-    // 3-->> delete admin account along with all associater manager
+    //3-->> delete admin account along with all associater manager
     @UseGuards(JwtAuthGuard)
     @Delete('deleteAccount/:id')
   async deleteAccount(@Param('id') adminId: string) {
@@ -170,7 +170,8 @@ export class AdminController{
                 
          if (token) {
          response.cookie('token', token, { httpOnly: true }); // Set JWT as a cookie
-         return response.send('Login successful');
+        //  return response.send('Login successful');
+         return response.send(token);
          } else {
          return response.send('Invalid username or password');
          }
@@ -215,9 +216,10 @@ export class AdminController{
     if (!managerExist) {
         const token = request.cookies['token'];
         const result = await this.adminService.addManager(token, managerData);
+       
 
-      // Sending notification when a new manager added
-        await this.notificationService.sendNotificationToAdmin(managerData.managerId, token);
+         await this.notificationService.sendNotificationToAdmin(managerData.managerId, token);
+        
 
         return result; 
     }
@@ -238,6 +240,7 @@ export class AdminController{
     @Delete('deleteManager/:id')
          async deleteManager(@Param('id') managerId: string) {
             try {
+                console.log(managerId);
                   const message = await this.adminService.deleteManager(managerId);
                  return { message };
             }catch (error) {
@@ -245,7 +248,14 @@ export class AdminController{
                 return "Something went wrong";
             }
     }
-
+//..................................................................................
+//     @UseGuards(JwtAuthGuard)
+//     @Get('getManagerById/:managerId')
+//     async getManagerById(@Param('managerId') managerId: string) {
+//      const managers = await this.adminService.findManagerById(managerId);
+//         return { managers };
+//    }
+//...............................................................................
 
     // 8 -->  Get all manager
 
